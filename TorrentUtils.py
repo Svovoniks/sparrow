@@ -1,0 +1,37 @@
+import subprocess
+from magnet2torrent import Magnet2Torrent, FailedToFetchExceptionsse
+
+class TorrentEngine:
+    def __init__(self) -> None:
+        self.script_line = 'start "{}"\n'
+        self.script = ""
+        self.tmp_file = "tmp.ps1"
+        self.start_command = f"powershell.exe .\\{self.tmp_file}"
+        
+    def add_download(self, magnet):
+        self.script += self.script_line.format(magnet)
+    
+    def flush_script(self):
+        with open(self.tmp_file, 'w') as file:
+            file.write(self.script) 
+    
+    def download(self):
+        self.flush_script()
+        subprocess.run(self.start_command)
+
+
+
+class MagnetChecker:
+    def __init__(self, magnet) -> None:
+        self.magnet = magnet
+        
+    async def get_filename(self):
+        m2t = Magnet2Torrent(self.magnet)
+        try:
+            filename, torrent_data = await m2t.retrieve_torrent()
+            return filename
+        except:
+            print("Couldn't check magnet link")
+        
+        return None
+
