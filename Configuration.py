@@ -1,13 +1,18 @@
 import json
+from typing import List
+from Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from Show import Show
-from main import CONFIG_FILE, REQUIRED_CONFIG_FIELDS
 from os.path import exists
+
+
+CONFIG_FILE = "sys_torrent.cfg"
+REQUIRED_CONFIG_FIELDS = ['download_dir', 'show_list']
 
 class Configuration:
     
-    def __init__(self, download_dir, title_list) -> None:
+    def __init__(self, download_dir: str, show_list: list[Show]) -> None:
         self.download_dir = download_dir
-        self.title_list = title_list
+        self.show_list = show_list
     
     
     # returns a Configuration object if CONFIG_FILE is valid
@@ -18,19 +23,19 @@ class Configuration:
         if config_json == None:
             return None
                 
-        return Configuration(config_json['download_dir'], [Show.from_json(i) for i in config_json["title_list"]])
+        return Configuration(config_json['download_dir'], [Show.from_json(i) for i in config_json["show_list"] if i != None])
     
     
-    # adds title to the title list BUT doesn't save it to the disk
-    def add_tile(self, title_name):
-        self.title_list.append(title_name)
+    # adds show to the show list BUT doesn't save it to the disk
+    def add_show(self, show: Show):
+        self.show_list.append(show)
     
     
     # builds json object from self
     def build_json(self):
         return {
             "download_dir": self.download_dir,
-            "title_list": [i.to_json() for i in self.title_list],
+            "show_list": [i.to_json() for i in self.show_list],
         }
     
     
@@ -42,8 +47,8 @@ class Configuration:
     
     # creates full config in CONFIG_FILE file and returns Configuration 
     @staticmethod
-    def create_config(download_dir, title_list):
-        config = Configuration(download_dir,  title_list)
+    def create_config(download_dir, show_list):
+        config = Configuration(download_dir,  show_list)
         
         with open(CONFIG_FILE) as file:
             json.dump(config.build_json())

@@ -1,10 +1,13 @@
 from os.path import isdir
-from ConfigManager import Configuration
+from Configuration import Configuration
+from ShowManager import ShowManager
+from TorrentUtils import TorrentEngine
 
 class UI:
     
     def __init__(self, config) -> None:
-        self.config = config
+        self.config: Configuration = config
+        self.show_manager: ShowManager = ShowManager(config)
     
     @staticmethod
     def start():
@@ -17,6 +20,30 @@ class UI:
         print("2. add new show")
         print("3. remove show")
     
+    def update_all(self):
+        updates = self.show_manager.check_for_updates()
+        
+        if len(updates) == 0:
+            print("Everything seems to be up to date")
+            return
+        
+        torrent_engine = TorrentEngine()
+        
+        
+        print('Queueing updates')
+        for i in updates:
+            torrent_engine.add_download(i)
+        
+        print('Starting downloading')
+        torrent_engine.download()
+        torrent_engine.clean_up()
+    
+    def add_show(self):
+        self
+    
+    def remove_show(show):
+        pass
+        
     @staticmethod
     def ask_for_config():
         print("I couldn't find a config file")
@@ -46,4 +73,3 @@ class UI:
             config = UI.ask_for_config()
             
         return UI(config)
-   
