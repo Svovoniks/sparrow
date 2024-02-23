@@ -4,16 +4,38 @@ from Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from Show import Show
 from os.path import exists
 
+DOWNLOAD_DIR = 'download_dir'
+SHOW_LIST = 'show_list'
+CACHE_DIR = 'cache_dir'
+USE_CACHE = 'use_cache'
+UPDATE_ON_APP_START = 'update_when_app_launched'
+
+PARSER_LIST = [
+    SubsPleaseParser, 
+]
 
 CONFIG_FILE = "sys_torrent.cfg"
 REQUIRED_CONFIG_FIELDS = ['download_dir', 'show_list']
 
+SAMPLE_CONFIG = {
+    'download_dir': None,
+    'show_list': None,
+    'cache_dir': 'cache',
+    'use_cache': True,
+}
+
 class Configuration:
     
-    def __init__(self, download_dir: str, show_list: list[Show]) -> None:
-        self.download_dir = download_dir
+    def __init__(self, full_json: str, show_list: list[Show]) -> None:
+        self.config_json = full_json
         self.show_list = show_list
+        
+    def __getitem__(self, arg):
+        return self.config_json[arg]
     
+    def __setitem__(self, arg, new_value):
+        self.config_json[arg] = new_value
+        
     
     # returns a Configuration object if CONFIG_FILE is valid
     @staticmethod
@@ -23,7 +45,7 @@ class Configuration:
         if config_json == None:
             return None
                 
-        return Configuration(config_json['download_dir'], [Show.from_json(i) for i in config_json["show_list"] if i != None])
+        return Configuration([Show.from_json(i) for i in config_json["show_list"] if i != None])
     
     
     # adds show to the show list BUT doesn't save it to the disk

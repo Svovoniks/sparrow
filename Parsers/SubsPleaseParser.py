@@ -11,7 +11,7 @@ SUBS_PLEASE_PARSER_NAME = 'SubsPlease'
 
 class SubsPleaseParser(ParserBase):
     def __init__(self) -> None:
-        super().__init__(SUBS_PLEASE_PARSER_NAME)
+        super().__init__()
         self.search_url = 'https://subsplease.org/shows/'
         self.api_url = 'https://subsplease.org/api/?f=show&tz=Europe/Moscow&sid={}'
         

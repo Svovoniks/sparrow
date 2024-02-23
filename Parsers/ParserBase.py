@@ -5,8 +5,8 @@ from Show import Show
 
 
 class ParserBase:
-    def __init__(self, parser_name) -> None:
-        self.parser_name = parser_name
+    def __init__(self) -> None:
+        pass
     
     
     # checks title for updates and returns magnet links

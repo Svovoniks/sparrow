@@ -1,5 +1,5 @@
 from os import listdir
-from Configuration import Configuration
+from Configuration import DOWNLOAD_DIR, Configuration
 from Parsers.ParserFactory import PARSER_MAP
 
 
@@ -11,7 +11,7 @@ class ShowManager:
         """
         returns list of magnet links for new episodes for tracked shows
         """
-        downloaded = listdir(self.config.download_dir)
+        downloaded = listdir(self.config[DOWNLOAD_DIR])
         
         to_download = []
         
