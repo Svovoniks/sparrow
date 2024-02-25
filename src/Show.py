@@ -1,23 +1,26 @@
 from collections import defaultdict
 from typing import List, Optional, Self
-from Configuration import CONFIG_FILE, Configuration
-from Parsers.ParserFactory import PARSER_MAP, get_parser_by_name
+
+# from Config_constants import PARSER_DICT
+
+# from Configuration import PARSER_DICT
+# from Parsers.ParserFactory import PARSER_MAP, get_parser_by_name
 
 
-REQUIRED_SHOW_FIELDS = ['show_title', 'parser', 'key']
+REQUIRED_SHOW_FIELDS = ['show_title', 'parser', 'filter', 'link']
 
 class Show:
-    def __init__(self, exact_title, parser_name, key) -> None:
+    def __init__(self, exact_title: str, parser_name: str, filter: str, link: str) -> None:
         self.title = exact_title
+        self.link = link
         self.parser_name = parser_name
-        self.key = key
+        self.filter = filter
         
-    def check_for_updates(self, download_folder_contents) -> list[str]:
-        """
-        returns list of magnet links for the new episodes of the show
-        """ 
-        return get_parser_by_name(self.parser_name).check_show(self, download_folder_contents)
-        
+    # def check_for_updates(self, download_folder_contents) -> list[str]:
+    #     """
+    #     returns list of magnet links for the new episodes of the show
+    #     """ 
+    #     return PARSER_DICT[self.parser_name]().check_show(self, download_folder_contents)
         
     def to_json(self):
         """
@@ -26,7 +29,8 @@ class Show:
         return {
             "show_title": self.title,
             "parser": self.parser_name,
-            "key": self.key,
+            "filter": self.filter,
+            "link": self.link,
         }
         
         
@@ -52,8 +56,15 @@ class Show:
                     missing.append(i)
                     
             print(f'Error: Found entry with missing {', '.join(missing)}')
-            print(f'Please fix it or remove it from the "{CONFIG_FILE}" file')
+            print(f'Please fix it or remove it from the config file')
             return None
         
-        return Show(json_obj["show_title"], json_obj["parser"], json_obj["key"])
-
+        return Show(json_obj["show_title"], json_obj["parser"], json_obj["filter"], json_obj["link"])
+    
+    def __eq__(self, __value: Self) -> bool:
+        return all([
+            self.title == __value.title,
+            self.parser_name == __value.parser_name,
+            self.link == __value.link,
+            self.filter == __value.filter,
+        ])

@@ -1,10 +1,8 @@
 import asyncio
 import re
-from typing import Optional
-from Configuration import CONFIG_FILE
-from Parsers.ParserBase import ParserBase
-from Show import Show
-from TorrentUtils import MagnetChecker
+from src.Parsers.ParserBase import ParserBase
+from src.Show import Show
+from src.TorrentUtils import MagnetChecker
 
 SUBS_PLEASE_PARSER_NAME = 'SubsPlease'
 
@@ -28,6 +26,20 @@ class SubsPleaseParser(ParserBase):
             return None
         
         return [i for i in re.findall(pattern, resp.text)]
+    
+    def get_show_filter(self, title, link):
+        print(f'Choose quality for "{title}" [1080/720/480]')
+        acceptable = ['1080', '720', '480']
+        
+        choice = str(input())
+        
+        while choice not in acceptable:
+            print('Invalid input. Please select one of the given options')
+            choice = str(input())
+        
+        print(f'You selected {choice}')
+        
+        return choice
 
     def get_show_page_sublink(self, exact_title: str):
         """
@@ -58,7 +70,7 @@ class SubsPleaseParser(ParserBase):
         return found[1]
     
     
-    def get_magnets(self, show_page):
+    def get_magnets(self, show_page, show_filter):
         """
         returns magnet links from show_page
         """
@@ -74,9 +86,7 @@ class SubsPleaseParser(ParserBase):
         if api_resp == None:
             return res
         
-        pattern = r'{"res":"1080","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}]}'
-        
-        print(api_resp.text)
+        pattern = r'{"res":"' + show_filter + '","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}]}'
         
         for i in re.findall(pattern, api_resp.text):
             res.append(i)
@@ -88,14 +98,7 @@ class SubsPleaseParser(ParserBase):
         """
         returns list of magnet links for new episodes of the show named title
         """
-        show_page = self.get_show_page_sublink(show.title)
-        
-        if show_page == None:
-            print(f"""Error: couldn't check for updates for "{show.title}")""")
-            print(f"Make sure you put show title correctly into the {CONFIG_FILE} file or try adding it again")
-            return []
-        
-        magnets = self.get_magnets(self.search_url + show_page[1:])
+        magnets = self.get_magnets(show.link, show.filter)
         
         to_download = []
         
@@ -104,13 +107,12 @@ class SubsPleaseParser(ParserBase):
             
             if filename in download_folder_contents:
                 return to_download
-            
+            print(f'Missing "{filename}"')
             to_download.append(i)
             
         return to_download
     
     
-    @staticmethod
-    def get_all_show_titles(title: str) -> list[str]:
-        return list(map(lambda a: a[1], SubsPleaseParser().parse_all_shows()))
+    def get_all_shows(self) -> list[list[str]]:
+        return list(map(lambda a: [a[1], self.search_url + a[0]], SubsPleaseParser().parse_all_shows()))
 

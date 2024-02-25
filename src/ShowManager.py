@@ -1,6 +1,5 @@
 from os import listdir
-from Configuration import DOWNLOAD_DIR, Configuration
-from Parsers.ParserFactory import PARSER_MAP
+from src.Configuration import DOWNLOAD_DIR, Configuration, PARSER_DICT
 
 
 class ShowManager:
@@ -17,7 +16,7 @@ class ShowManager:
         
         for i in self.config.show_list:
             print(f'checking {i.title}')
-            updates = i.check_for_updates(downloaded)
+            updates = PARSER_DICT[i.parser_name]().check_show(i, downloaded)
             
             if len(updates) > 0:
                 print(f'Found {len(updates)} new episodes')

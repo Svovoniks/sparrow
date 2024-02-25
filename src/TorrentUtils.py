@@ -1,8 +1,9 @@
 import subprocess
-from magnet2torrent import Magnet2Torrent, FailedToFetchExceptionsse
+from magnet2torrent import Magnet2Torrent
 from os import remove
 from random import randint
 from os.path import exists
+from src.utils import HiddenPrints
 
 class TorrentEngine:
     def __init__(self) -> None:
@@ -37,8 +38,9 @@ class MagnetChecker:
     async def get_filename(self):
         m2t = Magnet2Torrent(self.magnet)
         try:
-            filename, torrent_data = await m2t.retrieve_torrent()
-            return filename
+            with HiddenPrints():
+                filename, torrent_data = await m2t.retrieve_torrent()
+                return filename
         except:
             print("Couldn't check magnet link")
         
