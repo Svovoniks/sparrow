@@ -86,8 +86,6 @@ class SubsPleaseParser(ParserBase):
         if api_resp == None:
             return res
         
-        print(api_resp.text)
-        
         pattern = r'{"res":"' + show_filter + '","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}'
         
         for i in re.findall(pattern, api_resp.text):
