@@ -3,7 +3,7 @@
 - run programm (`py main.py`)
 
 # Simplified usage:   
-- download `setup.bat` (you can do it from releases) and double-click it
+- download `setup.bat` (you can do it from releases), put it where you want to install sparrow (it will be installed in a folder called `sparrow` next to the `setup.bat`) and double-click it
 - go to the folder `sparrow` (it was created on the last step) there you will find `update.bat` and `start.bat` (move them wherever, rename if you want)
 - to start the programm double-click `start.bat`, to update - `update.bat`
 
