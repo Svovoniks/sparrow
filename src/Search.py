@@ -66,52 +66,14 @@ class SearchEngine:
                         return (parser, best_match)
                     
         
-        return (parser, best_match)
+        return (best_match_parser, best_match)
 
-    def get_data(self):
+    def get_data(self, look_in=None):
+        if look_in != None:
+            self.data[look_in] = PARSER_DICT[look_in]().get_all_shows()
+            return
+        
         for name, cls in PARSER_DICT.items():
             self.data[name] = cls().get_all_shows()
         
-
-
-import random
-import string
-import time
-
-
-# if __name__ == '__main__':
-    
-#     def generate_random_strings(n, length):
-#         chars = string.ascii_letters + string.digits + string.punctuation
-#         return [[''.join(random.choice(chars) for _ in range(length)) , None] for _ in range(n)]
-
-#     # Example usage
-#     n = 100000
-#     length = 210
-#     random_strings = generate_random_strings(n, length)
-#     # print(random_strings)
-    
-#     print("starting")
-#     engine = SearchEngine(None)
-#     engine.data = random_strings
-    
-#     tm = time.time()
-#     print(engine.find(random_strings[-1]))
-#     print(random_strings[-1])
-#     print(time.time() - tm)
-    
-#     tm = time.time()
-#     min_dist = distance(random_strings[0], random_strings[-1])
-#     for i in random_strings:
-#         dis = distance(i[0], random_strings[-1][0])
-#         if dis < min_dist:
-#             min_dist = dis
-#             closest_word = i[0]
-            
-#             if min_dist == 0:
-#                 print(i)
-#                 break
-                
-#     print(time.time() - tm)
-#     print("done")
 

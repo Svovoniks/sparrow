@@ -8,7 +8,7 @@ class ParserBase:
     def __init__(self) -> None:
         pass
     
-    def check_show(self, show, download_folder_contents: str) -> list[str]:
+    def check_show(self, show, download_folder_contents: set[str]) -> list[str]:
         return []
     
     def get_all_shows(self) -> list[list[str]]:

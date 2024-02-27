@@ -10,7 +10,7 @@ class ShowManager:
         """
         returns list of magnet links for new episodes for tracked shows
         """
-        downloaded = listdir(self.config[DOWNLOAD_DIR])
+        downloaded = set(listdir(self.config[DOWNLOAD_DIR]))
         
         to_download = []
         
@@ -28,5 +28,5 @@ class ShowManager:
     
     @staticmethod
     def find_show(title: str):
-        for i in PARSER_MAP.values():
+        for i in PARSER_DICT.values():
             i.get_all_show_titles()

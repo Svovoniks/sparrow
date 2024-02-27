@@ -1,11 +1,13 @@
 from os.path import isdir
 from termcolor import colored
+import time
 
 from src.Configuration import Configuration, PARSER_DICT
 from src.Show import Show
 from src.ShowManager import ShowManager
 from src.TorrentUtils import TorrentEngine
 from src.Search import SearchEngine
+from src.utils import ask_for_num
 
 class UI:
     def __init__(self, config) -> None:
@@ -82,19 +84,35 @@ class UI:
         
         engine = SearchEngine()
         
-        import time
+        print('\nDo you want me to look somewhere specific?')
+        print('I can find stuff on:')
         
-        engine.get_data()
+        parser_list = list(PARSER_DICT.keys())
+        
+        for idx, el in enumerate(parser_list):
+            print(f'{idx+1}. {el}')
+        
+        look_in = input('Enter number of website [default: look everywhere]\n: ')
+        if look_in.isdigit() and 0 <= int(look_in)-1 < len(parser_list):
+            look_in = parser_list[int(look_in)-1]
+            print(f'Looking on {look_in}')
+        else:
+            look_in = None
+            print('Looking everywhere')
+        
+        engine.get_data(look_in)
+        
         tm = time.time()
         
         search_result = engine.find(show_name)
         if search_result == None:
             print("Search didn't return any results")
             return
-        print(f'time {time.time() - tm}')
+        
+        print(f'Look up time {time.time() - tm:.3f} sec')
         parser_name, closest_match = search_result
         
-        print(f'Found "{closest_match[0]}" on {parser_name}')
+        print(colored(f'Found "{closest_match[0]}" on {parser_name}', 'green'))
         
         parser = PARSER_DICT[parser_name]()
         
@@ -113,22 +131,8 @@ class UI:
     
     def remove_show(self):
         self.list_shows()
-        to_delete = input("Choose show to delete\nEnter number that corresponds to the show: ")
         
-        if to_delete.isdigit(): 
-            to_delete = int(to_delete)
-        else:
-            to_delete = -1
-        
-        while to_delete-1 >= len(self.config.show_list) or to_delete < 0:
-            print(colored("I beg your pardon?", 'red'))
-            to_delete = input("Choose show to delete\nEnter number that corresponds to the show: ")
-            
-            if to_delete.isdigit(): 
-                to_delete = int(to_delete)
-            else:
-                to_delete = -1
-        
+        to_delete = ask_for_num("Choose show to delete\nEnter number that corresponds to the show: ", len(self.config.show_list))
         
         print(f'Deleted: "{self.config.show_list[to_delete-1].title}"')
         

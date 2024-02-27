@@ -30,7 +30,6 @@ class TorrentEngine:
         remove(self.tmp_file)
 
 
-
 class MagnetChecker:
     def __init__(self, magnet) -> None:
         self.magnet = magnet

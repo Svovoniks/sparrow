@@ -88,7 +88,7 @@ class SubsPleaseParser(ParserBase):
         
         print(api_resp.text)
         
-        pattern = r'{"res":"' + show_filter + '","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}]}'
+        pattern = r'{"res":"' + show_filter + '","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}'
         
         for i in re.findall(pattern, api_resp.text):
             res.append(i)
@@ -96,7 +96,7 @@ class SubsPleaseParser(ParserBase):
         return res
         
     
-    def check_show(self, show: Show, download_folder_contents: str) -> list[str]:
+    def check_show(self, show: Show, download_folder_contents: set[str]) -> list[str]:
         """
         returns list of magnet links for new episodes of the show named title
         """

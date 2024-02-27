@@ -1,6 +1,7 @@
 import json
 from typing import List, Self
 from src.Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
+from src.Parsers.EZTVParser import EZTVParser, EZTV_PARSER_NAME
 from os.path import exists
 from src.Show import Show
 
@@ -10,6 +11,7 @@ UPDATE_ON_APP_START = 'update_when_app_launched'
 
 PARSER_DICT = {
     SUBS_PLEASE_PARSER_NAME: SubsPleaseParser, 
+    EZTV_PARSER_NAME: EZTVParser, 
 }
 
 CONFIG_FILE = "sys_torrent.cfg"
