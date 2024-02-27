@@ -1,10 +1,3 @@
-import array
-from os import listdir
-from multiprocessing.connection import Connection
-from Levenshtein import distance
-from multiprocessing import Value, Process, cpu_count, Pipe, Manager
-import math
-# import spacy
 import textdistance
 
 from src.Configuration import PARSER_DICT, Configuration

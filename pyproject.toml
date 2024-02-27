@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "Sparrow"
 requires-python = ">= 3.8"
-dynamic = ["dependencies"]
+versin = 0.1
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}

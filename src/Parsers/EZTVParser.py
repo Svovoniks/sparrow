@@ -1,5 +1,4 @@
 import asyncio
-from pyparsing import Regex
 from src.Parsers.ParserBase import ParserBase
 import re
 from functools import reduce
