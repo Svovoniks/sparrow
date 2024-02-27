@@ -3,6 +3,7 @@
 - run programm (`py main.py`)
 
 # Simplified usage:   
+- download project (download setup.bat and double-click it)
 - install requirements (double-tap `install_reqirements.bat`)
 - create launcher (double-tap `create_launcher.bat`)
 - run programm (double-tap `start.bat` created in the previous step, you can move wherever)
