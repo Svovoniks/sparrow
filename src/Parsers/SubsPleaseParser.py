@@ -114,5 +114,8 @@ class SubsPleaseParser(ParserBase):
     
     
     def get_all_shows(self) -> list[list[str]]:
-        return list(map(lambda a: [a[1], self.search_url + a[0]], SubsPleaseParser().parse_all_shows()))
+        all_shows = SubsPleaseParser().parse_all_shows()
+        if all_shows == None:
+            return []
+        return list(map(lambda a: [a[1], self.search_url + a[0]], all_shows))
 

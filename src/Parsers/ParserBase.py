@@ -1,5 +1,6 @@
 from typing import List, Optional
 import requests
+from termcolor import colored
 
 # from Show import Show
 
@@ -31,11 +32,15 @@ class ParserBase:
             None: if page could't be loaded
             Responce: otherwise
         """
-        resp = requests.get(url)
         
-        if resp.status_code != 200:
-            print(f"Couldn't load {url}")
+        try:
+            resp = requests.get(url)
+            
+            if resp.status_code != 200:
+                print(colored(f"Couldn't load {url}", 'red'))
+                return None
+        except:
+            print(colored(f"Couldn't load {url}", 'red'))
             return None
-        
         return resp
 

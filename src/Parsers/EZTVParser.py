@@ -1,4 +1,6 @@
 import asyncio
+
+from termcolor import colored
 from src.Parsers.ParserBase import ParserBase
 import re
 from functools import reduce
@@ -18,6 +20,9 @@ class EZTVParser(ParserBase):
         
     def check_show(self, show: Show, download_folder_contents: set[str]) -> list[str]:
         show_page = self.load_page(show.link)
+        if show_page == None:
+            return []
+        
         episodes = self.get_all_show_episodes(show_page)
         
         to_download = []
@@ -61,7 +66,7 @@ class EZTVParser(ParserBase):
         pattern = r'''<td class="forum_thread_post"><a href="([^"]+)" class="thread_link">([^"]+)</a></td>'''
         
         if page == None:
-            return None
+            return []
         
         return [(i[1], self.main_url + i[0]) for i in re.findall(pattern, page.text)]
     

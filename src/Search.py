@@ -13,39 +13,13 @@ class SearchEngine:
         if len(self.data) == 0:
             return None
         
+        if all(map(lambda a: len(a) == 0, self.data.values())):
+            return None
+        
         best_match_parser = list(self.data.keys())[0]
         best_match = self.data[best_match_parser][0]
         
-        
-        # min_dist = distance(best_match[0], query)
-        # min_dist = nlp(best_match[0]).similarity(query_n)
         min_dist = textdistance.levenshtein(best_match[0], query)
-    
-        # for parser, show_set in self.data.items():
-        #     for i in show_set:
-        #         dis = distance(i[0], query)
-        #         if dis < min_dist:
-        #             min_dist = dis
-        #             best_match = i
-        #             best_match_parser = parser
-        #             print(i[0])
-        #             print(dis)
-                    
-        #             if min_dist == 0:
-        #                 return (parser, best_match)
-        # for parser, show_set in self.data.items():
-        #     for i in show_set:
-        #         # print(i[0])
-        #         dis = query_n.similarity(nlp(i[0]))
-        #         if dis > min_dist:
-        #             min_dist = dis
-        #             best_match = i
-        #             best_match_parser = parser
-        #             # print(i[0])
-        #             # print(dis)
-                    
-        #             if min_dist == 1:
-        #                 return (parser, best_match)
                     
         for parser, show_set in self.data.items():
             for i in show_set:

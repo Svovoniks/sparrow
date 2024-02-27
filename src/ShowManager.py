@@ -15,7 +15,7 @@ class ShowManager:
         to_download = []
         
         for i in self.config.show_list:
-            print(f'checking {i.title}')
+            print(f'checking "{i.title}"')
             updates = PARSER_DICT[i.parser_name]().check_show(i, downloaded)
             
             if len(updates) > 0:
