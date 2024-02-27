@@ -23,14 +23,12 @@ class EZTVParser(ParserBase):
         to_download = []
         
         for idx in self.apply_filter(episodes, show.filter):
+            page = self.load_page(self.main_url + episodes[idx][0])
             
-            magnet = self.get_magnet(self.main_url + episodes[idx][0])
-            
-            filename = asyncio.run(MagnetChecker(magnet).get_filename())
+            magnet = self.get_magnet(page)
+            filename = self.get_torrent_filename(page)
             
             if filename == None: continue
-            
-            filename = filename[:-14]
             
             if filename in download_folder_contents:
                 return to_download
@@ -40,9 +38,15 @@ class EZTVParser(ParserBase):
         
         return to_download
     
-    def get_magnet(self, episode_link):
+    def get_torrent_filename(self, page):
+        pattern = r'''<a href="([^"]+)" title="Download Torrent" rel="nofollow">'''
+        
+        tor_link = re.search(pattern, page.text)[1]
+        
+        return tor_link[tor_link.rfind('/')+1:-8]
+    
+    def get_magnet(self, page):
         pattern = r'''<a href="([^"]+)" title="Magnet Link">'''
-        page = self.load_page(episode_link)
         
         return re.search(pattern, page.text)[1]
         
