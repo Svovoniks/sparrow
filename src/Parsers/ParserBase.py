@@ -12,7 +12,7 @@ class ParserBase:
     def check_show(self, show, download_folder_contents):
         return []
     
-    def get_all_shows(self):
+    def get_all_shows(self, key):
         """
         Returns:
             list[list[str]]: list of all shows on the site available on the site

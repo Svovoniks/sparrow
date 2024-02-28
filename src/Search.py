@@ -8,7 +8,7 @@ class SearchEngine:
     
     def find(self, query):
         if self.data == {}:
-            self.get_data()
+            self.get_data(query)
         
         if len(self.data) == 0:
             return None
@@ -35,12 +35,12 @@ class SearchEngine:
         
         return (best_match_parser, best_match)
 
-    def get_data(self, look_in=None):
+    def get_data(self, key, look_in=None):
         if look_in != None:
-            self.data[look_in] = PARSER_DICT[look_in]().get_all_shows()
+            self.data[look_in] = PARSER_DICT[look_in]().get_all_shows(key)
             return
         
         for name, cls in PARSER_DICT.items():
-            self.data[name] = cls().get_all_shows()
+            self.data[name] = cls().get_all_shows(key)
         
 

@@ -55,7 +55,7 @@ class EZTVParser(ParserBase):
         return re.search(pattern, page.text)[1]
         
     
-    def get_all_shows(self):
+    def get_all_shows(self, key):
         """
         Returns:
             list[list[str]]: list of all shows on the site available on the site

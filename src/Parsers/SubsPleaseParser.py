@@ -124,7 +124,7 @@ class SubsPleaseParser(ParserBase):
         return to_download
     
     
-    def get_all_shows(self):
+    def get_all_shows(self, key):
         all_shows = SubsPleaseParser().parse_all_shows()
         if all_shows == None:
             return []
