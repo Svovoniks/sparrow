@@ -5,9 +5,8 @@ from src.Parsers.ParserBase import ParserBase
 import re
 from functools import reduce
 from src.Show import Show
-from src.TorrentUtils import MagnetChecker
 
-from src.utils import ask_for_num
+from src.utils import ask_for_num, print_colored_list, ask_for_input
 
 EZTV_PARSER_NAME = 'EZTV'
 
@@ -75,8 +74,7 @@ class EZTVParser(ParserBase):
         '''
         returns list of all episodes found on the given page in the format of [(sub_link_to_the_episode, episode_name_, episode_file_size), (...)]
         '''
-        pattern = r'''<a href="([^"]+)" title="[^"]+" alt="([^"]+)\([^"]+" class="epinfo">[^"]+</a>\n</td>\n<td align="center" class="forum_thread_post">([^"]+)</td>'''
-        
+        pattern = r'''<a href="([^"]+)" title="[^"]+" alt="([^"]+)\(([^"]+)\)" class="epinfo">[^"]+</a>\n</td>'''
         all_episodes = []
         
         for i in re.findall(pattern, page.text):
@@ -85,7 +83,6 @@ class EZTVParser(ParserBase):
         return all_episodes
     
     def print_all_episodes(self, all_episodes, ep_filter=None):
-        # print(all_episodes)
         mx_name_len, mx_size_len = map(len, reduce(lambda tp1, tp2: (None, max(tp1[1], tp2[1], key=len), max(tp1[2], tp2[2], key=len)), all_episodes, (None, '', ''))[1:])
         
         filter_list = None
@@ -95,9 +92,8 @@ class EZTVParser(ParserBase):
         else:
             filter_list = range(len(all_episodes))
         
-        for idx in filter_list:
-            print((f'{idx+1}. ' + '{1:' + str(mx_name_len) + '}   {2:' + str(mx_size_len) + '}').format(*all_episodes[idx]))
-    
+        print_colored_list(filter_list, mapper=lambda idx: ('{1:' + str(mx_name_len) + '}   {2:' + str(mx_size_len) + '}').format(*all_episodes[idx]))
+        
     def get_filter(self, ep_title):
         return re.sub(self.episode_num_pattern, '<<episode_number>>', ep_title)
     
@@ -109,6 +105,11 @@ class EZTVParser(ParserBase):
     
     
     def ask_for_filter(self, episodes, title):
+        if len(episodes) == 0:
+            print(colored(f'''"{title}" doesn't have any episodes at the moment''', 'red'))
+            print(colored(f"So i can't create a show filter right now, plese try again later", 'red'))
+            print(colored(f"Exiting", 'red'))
+            exit(1)
         
         print(f'Here is a list of all episode for {title}')
         self.print_all_episodes(episodes)
@@ -122,14 +123,17 @@ class EZTVParser(ParserBase):
         self.print_all_episodes(episodes, ep_filter)
         
         print('Is that correct?')
+        print('Enter [y/n]')
         
-        ans = input('Enter [y/n] (default: yes) :')
+        ans = ask_for_input('y (yes)')
         
         if ans == 'n':
             print("\nI'm sorry")
             print('If you selected the wrong episode you can try again')
             print('Otherwise please contact the developer')
-            ans = input('Try again [y/n] (default: yes) :')
+            print('Try again [y/n]')
+            ans = ask_for_input('y (try again)')
+            
             if ans == 'n':
                 return None
             
@@ -151,5 +155,3 @@ class EZTVParser(ParserBase):
         
         return ep_filter
     
-
-

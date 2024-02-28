@@ -1,6 +1,7 @@
-import os, sys
+import os, sys, math
 
 from termcolor import colored
+
 
 class HiddenPrints:
     def __enter__(self):
@@ -13,16 +14,25 @@ class HiddenPrints:
         
 
 def ask_for_num(msg, mx_num, min_num = 1):
-    num = input(msg)
-        
+    print(msg)
+    num_str = ask_for_input('ask again')
+    
+    num = num_str
+    
     if num.isdigit(): 
         num = int(num)
     else:
         num = min_num - 1
     
     while num > mx_num or num < min_num:
+        if num_str == 'exit':
+            exit(0)
+            
         print(colored("I beg your pardon?", 'red'))
-        num = input(msg)
+        print(colored('ProTip: If you are being repeatedly asked to do something against your will just quietly type "exit"', 'blue'))
+        
+        num_str = ask_for_input('ask again')
+        num = num_str
         
         if num.isdigit(): 
             num = int(num)
@@ -30,3 +40,20 @@ def ask_for_num(msg, mx_num, min_num = 1):
             num = min_num - 1
             
     return num
+
+def verify_num_input(num: str, mx_num, min_num = 1):
+    return num.isdigit() and int(num) <= mx_num and int(num) >= min_num
+
+def print_colored_list(_list: list[str], color = 'cyan', line_color = 'yellow', mapper = lambda a: a):
+    print(colored("_______________________", line_color))
+    
+    idx_space = 1 + int(math.log(len(_list), 10))
+    
+    for idx, el in enumerate(_list):
+        print(colored(('{0:' + str(idx_space) + 'd}. ').format(idx+1) +  f'{mapper(el)}', color))
+    
+    print(colored("_______________________", line_color))
+    
+def ask_for_input(default_action: str, prompt_color='green'):
+    print()
+    return str(input(colored(f'[default: {default_action}] > ', prompt_color))).strip()

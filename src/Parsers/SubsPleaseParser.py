@@ -1,8 +1,11 @@
 import asyncio
 import re
+
+from termcolor import colored
 from src.Parsers.ParserBase import ParserBase
 from src.Show import Show
 from src.TorrentUtils import MagnetChecker
+from src.utils import ask_for_input
 
 SUBS_PLEASE_PARSER_NAME = 'SubsPlease'
 
@@ -31,13 +34,18 @@ class SubsPleaseParser(ParserBase):
         print(f'Choose quality for "{title}" [1080/720/480]')
         acceptable = ['1080', '720', '480']
         
-        choice = str(input())
+        choice = ask_for_input('ask again')
         
         while choice not in acceptable:
-            print('Invalid input. Please select one of the given options')
-            choice = str(input())
+            if choice == 'exit':
+                exit(0)
+            
+            print(colored('Invalid input. Please select one of the given options', 'red'))
+            print(colored('ProTip: If this conversation starts to feel threatening just type "exit" ', 'blue'))
+            
+            choice = ask_for_input('ask again')
         
-        print(f'You selected {choice}')
+        print(colored(f'You selected {choice}', 'green'))
         
         return choice
 
