@@ -49,7 +49,7 @@ class SubsPleaseParser(ParserBase):
         
         return choice
 
-    def get_show_page_sublink(self, exact_title: str):
+    def get_show_page_sublink(self, exact_title):
         """
         retruns string that needs to be added to search url to get the show page
         """
@@ -102,7 +102,7 @@ class SubsPleaseParser(ParserBase):
         return res
         
     
-    def check_show(self, show: Show, download_folder_contents: set[str]) -> list[str]:
+    def check_show(self, show: Show, download_folder_contents):
         """
         returns list of magnet links for new episodes of the show named title
         """
@@ -121,7 +121,7 @@ class SubsPleaseParser(ParserBase):
         return to_download
     
     
-    def get_all_shows(self) -> list[list[str]]:
+    def get_all_shows(self):
         all_shows = SubsPleaseParser().parse_all_shows()
         if all_shows == None:
             return []

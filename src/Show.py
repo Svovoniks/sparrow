@@ -42,7 +42,7 @@ class Show:
     
     
     @staticmethod
-    def from_json(json_obj: dict):
+    def from_json(json_obj):
         """
         returns Show object represented by json_obj or None if json is not valid
         """

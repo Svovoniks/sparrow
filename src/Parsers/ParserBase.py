@@ -9,10 +9,10 @@ class ParserBase:
     def __init__(self) -> None:
         pass
     
-    def check_show(self, show, download_folder_contents: set[str]) -> list[str]:
+    def check_show(self, show, download_folder_contents):
         return []
     
-    def get_all_shows(self) -> list[list[str]]:
+    def get_all_shows(self):
         """
         Returns:
             list[list[str]]: list of all shows on the site available on the site

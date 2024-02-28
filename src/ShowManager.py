@@ -6,7 +6,7 @@ class ShowManager:
     def __init__(self, config: Configuration) -> None:
         self.config = config
         
-    def check_for_updates(self) -> list[str]:
+    def check_for_updates(self):
         """
         returns list of magnet links for new episodes for tracked shows
         """

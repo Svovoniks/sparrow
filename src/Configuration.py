@@ -24,9 +24,9 @@ SAMPLE_CONFIG = {
 
 class Configuration:
     
-    def __init__(self, full_json: dict) -> None:
+    def __init__(self, full_json) -> None:
         self.config_json = full_json
-        self.show_list: list[Show] = [Show.from_json(i) for i in self.config_json[SHOW_LIST] if i != None]
+        self.show_list = [Show.from_json(i) for i in self.config_json[SHOW_LIST] if i != None]
         
     def __getitem__(self, arg):
         return self.config_json[arg]
