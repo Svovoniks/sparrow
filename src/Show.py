@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Optional, Self
+# from typing import List, Optional, Self
 
 # from Config_constants import PARSER_DICT
 
@@ -42,7 +42,7 @@ class Show:
     
     
     @staticmethod
-    def from_json(json_obj: dict) -> Optional[Self]:
+    def from_json(json_obj: dict):
         """
         returns Show object represented by json_obj or None if json is not valid
         """
@@ -61,7 +61,7 @@ class Show:
         
         return Show(json_obj["show_title"], json_obj["parser"], json_obj["filter"], json_obj["link"])
     
-    def __eq__(self, __value: Self) -> bool:
+    def __eq__(self, __value) -> bool:
         return all([
             self.title == __value.title,
             self.parser_name == __value.parser_name,

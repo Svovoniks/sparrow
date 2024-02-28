@@ -1,5 +1,5 @@
 import json
-from typing import List, Self
+# from typing import List, Self
 from src.Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from src.Parsers.EZTVParser import EZTVParser, EZTV_PARSER_NAME
 from os.path import exists
@@ -35,7 +35,7 @@ class Configuration:
         self.config_json[arg] = new_value
     
     @staticmethod
-    def try_parse_config() -> Self:
+    def try_parse_config():
         config_json = Configuration.try_get_config_json()
         
         if config_json == None:
@@ -67,7 +67,7 @@ class Configuration:
     
     # creates full config in CONFIG_FILE file and returns Configuration 
     @staticmethod
-    def create_config(download_dir) -> Self:
+    def create_config(download_dir):
         config_json =  SAMPLE_CONFIG
         config_json.update({DOWNLOAD_DIR: download_dir})
         
@@ -103,7 +103,7 @@ class Configuration:
         
         return None
     
-    def __eq__(self, __value: Self) -> bool:
+    def __eq__(self, __value) -> bool:
         if __value == None:
             return False
         
