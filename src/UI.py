@@ -31,7 +31,7 @@ class UI:
         screens_map = {}
         
         for idx, el_tp in enumerate(screen_list):
-            screens_map[str(idx)] = el_tp[2]
+            screens_map[str(idx+1)] = el_tp[2]
             screens_map[el_tp[0]] = el_tp[2]
         
         print('You can:')
