@@ -17,7 +17,7 @@ class SubsPleaseParser(ParserBase):
         self.api_url = 'https://subsplease.org/api/?f=show&tz=Europe/Moscow&sid={}'
         
         
-    def parse_all_shows(self) -> list[list[str]]:
+    def parse_all_shows(self):
         """
         returns list of ["show_sublink", "show_title"] for all shows on the site
         """

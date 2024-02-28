@@ -16,11 +16,6 @@ class Show:
         self.parser_name = parser_name
         self.filter = filter
         
-    # def check_for_updates(self, download_folder_contents) -> list[str]:
-    #     """
-    #     returns list of magnet links for the new episodes of the show
-    #     """ 
-    #     return PARSER_DICT[self.parser_name]().check_show(self, download_folder_contents)
         
     def to_json(self):
         """
