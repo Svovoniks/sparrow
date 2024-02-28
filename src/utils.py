@@ -44,7 +44,7 @@ def ask_for_num(msg, mx_num, min_num = 1):
 def verify_num_input(num: str, mx_num, min_num = 1):
     return num.isdigit() and int(num) <= mx_num and int(num) >= min_num
 
-def print_colored_list(_list: list[str], color = 'cyan', line_color = 'yellow', mapper = lambda a: a):
+def print_colored_list(_list, color = 'cyan', line_color = 'yellow', mapper = lambda a: a):
     print(colored("_______________________", line_color))
     
     idx_space = 1 + int(math.log(max(len(_list), 1), 10))
