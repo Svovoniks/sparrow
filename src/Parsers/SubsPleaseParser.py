@@ -111,12 +111,15 @@ class SubsPleaseParser(ParserBase):
         to_download = []
         
         for i in magnets:
-            filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
-            
-            if filename in download_folder_contents:
-                return to_download
-            print(f'Missing "{filename}"')
-            to_download.append(i)
+            try:
+                filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
+                
+                if filename in download_folder_contents:
+                    return to_download
+                print(f'Missing "{filename}"')
+                to_download.append(i)
+            except:
+                pass
             
         return to_download
     
