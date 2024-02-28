@@ -17,7 +17,7 @@ class EZTVParser(ParserBase):
         self.all_shows_url = 'https://eztvx.to/showlist/'
         self.episode_num_pattern = r'(S\d\dE\d\d)'
         
-    def check_show(self, show: Show, download_folder_contents: set[str]):
+    def check_show(self, show: Show, download_folder_contents):
         show_page = self.load_page(show.link)
         if show_page == None:
             return []
