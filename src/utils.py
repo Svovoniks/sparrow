@@ -29,7 +29,7 @@ def ask_for_num(msg, mx_num, min_num = 1):
             exit(0)
             
         print(colored("I beg your pardon?", 'red'))
-        print(colored('ProTip: If you are being repeatedly asked to do something against your will just quietly type "exit"', 'blue'))
+        print(colored('ProTip: If you are being repeatedly asked to do something against your will just quietly type "exit"', 'cyan'))
         
         num_str = ask_for_input('ask again')
         num = num_str

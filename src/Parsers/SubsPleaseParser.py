@@ -41,7 +41,7 @@ class SubsPleaseParser(ParserBase):
                 exit(0)
             
             print(colored('Invalid input. Please select one of the given options', 'red'))
-            print(colored('ProTip: If this conversation starts to feel threatening just type "exit" ', 'blue'))
+            print(colored('ProTip: If this conversation starts to feel threatening just type "exit" ', 'cyan'))
             
             choice = ask_for_input('ask again')
         
