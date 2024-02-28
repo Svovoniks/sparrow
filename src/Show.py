@@ -55,7 +55,7 @@ class Show:
                 if i not in json_cp:
                     missing.append(i)
                     
-            print(f'Error: Found entry with missing {', '.join(missing)}')
+            print(f'Error: Found entry with missing {", ".join(missing)}')
             print(f'Please fix it or remove it from the config file')
             return None
         
