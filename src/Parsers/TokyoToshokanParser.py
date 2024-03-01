@@ -36,8 +36,7 @@ class TokyoToshokanParser(ParserBase):
         return to_download
     
     def get_all_episodes_from_page(self, page, episodes, limit=None):
-        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td><td[^(</td>)]+</td></tr><tr class="shade category_0"><td class="desc-bot">[^(?| Size:)]+| Size: ([^|]+) |'''
-        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
+        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">(.+?)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
         
         found = 0
         for i in re.findall(pattern, page.text):
@@ -45,7 +44,7 @@ class TokyoToshokanParser(ParserBase):
                 break
             
             found += 1
-            episodes.append((i[1] + i[2], i[0], i[3]))
+            episodes.append((i[1].replace('<span class="s"> </span>', ''), i[0], i[2]))
         
         return found
     
