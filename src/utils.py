@@ -44,13 +44,50 @@ def ask_for_num(msg, mx_num, min_num = 1):
 def verify_num_input(num: str, mx_num, min_num = 1):
     return num.isdigit() and int(num) <= mx_num and int(num) >= min_num
 
-def print_colored_list(_list, color = 'cyan', line_color = 'yellow', mapper = lambda a: a):
+
+
+def map_to_columns(_list):
+    if len(_list) == 0:
+        return _list
+    
+    res_arr = None
+    
+    if not (type(_list[0]) == type(list()) or type(_list[0]) == type(tuple())):
+        _list = list(map(lambda a: [a], _list))
+    
+    res_arr = [None]*len(_list)
+    mx_arr = [0]*len(_list[0])
+    
+    for i in range(len(_list)):
+        for j in range(len(_list[i])):
+            mx_arr[j] = max(mx_arr[j],  len(_list[i][j]))
+    
+    for i in range(len(_list)):
+        res_arr[i] = []
+        for j in range(len(_list[i])):
+            res_arr[i].append(('{0:' + str(mx_arr[j]) + '}').format(_list[i][j]))
+    
+    return res_arr
+
+def print_colored_list(_list, color = 'cyan', line_color = 'yellow', mapper = lambda a: a, first_heading=False, col_sep='   '):
     print(colored("_______________________", line_color))
+    
+    column_list = []
+    if first_heading:
+        column_list.append(_list[0])
+    
+    column_list.extend(list(map(mapper, _list[int(first_heading):])))
+    column_list = map_to_columns(column_list)
     
     idx_space = 1 + int(math.log(max(len(_list), 1), 10))
     
-    for idx, el in enumerate(_list):
-        print(colored(('{0:' + str(idx_space) + 'd}. ').format(idx+1) +  f'{mapper(el)}', color))
+    if first_heading:
+        print(colored(' '*idx_space + '  ' + col_sep.join(column_list[0]), 'yellow'))
+    
+    idx_space = 1 + int(math.log(max(len(_list), 1), 10))
+    
+    for idx, el in enumerate(column_list[int(first_heading):]):
+        print(colored(('{0:' + str(idx_space) + 'd}. ').format(idx+1) +  col_sep.join(el), color))
     
     print(colored("_______________________", line_color))
     

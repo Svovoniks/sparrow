@@ -2,11 +2,12 @@
 import requests
 from termcolor import colored
 import re
+from src.Show import Show
 
 from src.Parsers.ParserBase import ParserBase
+from src.utils import ask_for_num, print_colored_list, ask_for_input
 
-
-# from Show import Show
+TOKYO_TOSHOKAN_PARSER_NAME = 'TokyoToshokan'
 
 
 class TokyoToshokanParser(ParserBase):
@@ -21,7 +22,18 @@ class TokyoToshokanParser(ParserBase):
         return key
     
     def check_show(self, show, download_folder_contents):
-        return []
+        episodes = self.get_all_show_episodes(show.title)
+        
+        to_download = []
+        
+        for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
+            if episode[0] in download_folder_contents:
+                return to_download
+            
+            print(f'Missing "{episode[0]}"')
+            to_download.append(episode[1])
+        
+        return to_download
     
     def get_all_episodes_from_page(self, page, episodes, limit=None):
         pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td>'''
@@ -29,7 +41,7 @@ class TokyoToshokanParser(ParserBase):
         found = 0
         
         for i in re.findall(pattern, page.text):
-            if limit != None and limit >= len(episodes): 
+            if limit != None and limit <= len(episodes):
                 break
             
             found += 1
@@ -38,11 +50,14 @@ class TokyoToshokanParser(ParserBase):
         return found
     
     
-    def get_all_shows(self, key, limit=100):
+    def get_all_shows(self):
+        return []
+    
+    def get_all_show_episodes(self, key, limit=200):
         """
         Returns:
-            list[list[str]]: list of all shows on the site available on the site
-            if the form of [[title1, link_to_the_show_page], [title2, link_to_the_show_page]]
+            list[list[str]]: list of all episodes found for the given key
+            if the form of [(episode1_name, episode1_magnet_link), ...]
         """
         show_url = self.search_url.format(self.process_key(key))
         page = self.load_page(show_url)
@@ -75,6 +90,107 @@ class TokyoToshokanParser(ParserBase):
         
         return all_episodes
     
+    def preprocess_title(self,  title):
+        return title.replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('\\', '')
+    
+    def process_user_filter(self, _filter):
+        real_rgx = r'.*'
+
+        user_rgx = r'<<[^(>>)]+>>'
+
+        full_re = r''
+        
+        split_list = re.split(user_rgx, _filter)
+        
+        if len(split_list) == 0:
+            return full_re
+        
+        for i in split_list:
+            if i == '':
+                continue
+            
+            full_re += self.preprocess_title(i) + real_rgx
+        
+        return full_re
+    
+    def apply_filter(self, real_filter, episodes):
+        return list(filter(lambda a: re.fullmatch(real_filter, self.preprocess_title(a[0])) !=  None, episodes))
+            
+    def get_filter(self, title, episodes):
+        print('This website is an aggregator of shows from multiple sources')
+        print("And each source has it's own naming scheme")
+        print("To solve this problem we would need an AI, or a separate parser for each source")
+        print("Spoiler: This programm is none of those things")
+        print("So we are going to have to outsourse this task to some external AI, an AGI perhaps")
+        print("As you may have guessed, we are going to use you")
+        print()
+        print("Here is what you have to do:")
+        print(f'1. Look at this filename "{colored(title, "green")}"')
+        print(f'2. Encase parts of it that can change from one episode to the next like this: <<{colored("variable", "green")}>>')
+        print()
+        print('For example if filename is "[SubsPlease] Metallic Rouge - 08 (1080p) [19D9D43F].mkv" than')
+        print('You should change it to "[SubsPlease] Metallic Rouge - <<08>> (1080p) <<[19D9D43F]>>.mkv"')
+        print('''And don't type ""''')
+        
+        
+        ok = False
+        user_filter = None
+        
+        while not ok:
+            user_filter = ask_for_input('empty filter (matches nothing)')
+            
+            processed_filter = self.process_user_filter(user_filter)
+            
+            print('\nAfter applying the filter only these episodes remain:')
+            
+            print_colored_list(self.apply_filter(processed_filter, episodes), mapper=lambda a: a[0])
+            
+            print('Is that correct?')
+            print('Enter [y/n]')
+        
+            ans = ask_for_input('y (yes)')
+            
+            if ans == 'n':
+                print('Do you want to try again [y/n]')
+                ans = ask_for_input('y (try again)')
+                
+                if ans == 'n':
+                    return None
+                
+                continue
+            
+            ok = True
+        
+        return user_filter
+    
     def get_show_filter(self, title, link):
-        return ''
+        episodes = self.get_all_show_episodes(title)
+        
+        if len(episodes) == 0:
+            print(colored(f'''"{title}" doesn't have any episodes at the moment''', 'red'))
+            print(colored(f"So i can't create a show filter right now, plese try again later", 'red'))
+            print(colored(f"Exiting", 'red'))
+            exit(1)
+        
+        print(f'Here is a list of all episode for {title}')
+        
+        print_colored_list(episodes, mapper=lambda a: a[0])
+        
+        ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want me to create episode filter\n', len(episodes))
+        
+        ep_filter = self.get_filter(episodes[ep_num-1][0], episodes)
+        
+        if ep_filter != None:
+            return ep_filter
+        
+        return None
+    
+    def find_show(self, query):
+        link = self.search_url.format(self.process_key(query))
+        show_filter = self.get_show_filter(query, link)
+        
+        if show_filter == None:
+            return None
+        
+        return Show(query, TOKYO_TOSHOKAN_PARSER_NAME, show_filter, link)
 

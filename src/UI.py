@@ -96,44 +96,11 @@ class UI:
         
         engine = SearchEngine()
         
-        print('\nI can find stuff on:')
+        show = engine.find_show(show_name)
         
-        parser_list = list(PARSER_DICT.keys())
-        
-        print_colored_list(parser_list)
-        
-        print('Do you want me to look somewhere specific?')
-        print('Enter number of website')
-        
-        look_in = ask_for_input('look everywhere')
-        
-        if verify_num_input(look_in, len(parser_list)):
-            look_in = parser_list[int(look_in)-1]
-            print(f'Looking on {look_in}')
-        else:
-            look_in = None
-            print('Looking everywhere')
-        
-        engine.get_data(look_in)
-        
-        tm = time.time()
-        
-        search_result = engine.find(show_name)
-        if search_result == None:
+        if show == None:
             print("Search didn't return any results")
             return
-        
-        print(f'Look up time {time.time() - tm:.3f} sec')
-        parser_name, closest_match = search_result
-        
-        print(colored(f'Found "{closest_match[0]}" on {parser_name}', 'green'))
-        print()
-        
-        parser = PARSER_DICT[parser_name]()
-        
-        show_filter = parser.get_show_filter(*closest_match)
-        
-        show = Show(closest_match[0], parser_name, show_filter, closest_match[1])
         
         if show in self.config.show_list:
             print(colored('This show was already in you list', 'red'))

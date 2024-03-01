@@ -57,6 +57,9 @@ class Show:
         return Show(json_obj["show_title"], json_obj["parser"], json_obj["filter"], json_obj["link"])
     
     def __eq__(self, __value) -> bool:
+        if __value == None:
+            return False
+        
         return all([
             self.title == __value.title,
             self.parser_name == __value.parser_name,
