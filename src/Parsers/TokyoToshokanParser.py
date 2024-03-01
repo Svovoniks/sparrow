@@ -128,8 +128,8 @@ class TokyoToshokanParser(ParserBase):
         print(f'1. Look at this filename "{colored(title, "green")}"')
         print(f'2. Encase parts of it that can change from one episode to the next like this: <<{colored("variable", "green")}>>')
         print()
-        print('For example if filename is "[SubsPlease] Metallic Rouge - 08 (1080p) [19D9D43F].mkv" than')
-        print('You should change it to "[SubsPlease] Metallic Rouge - <<08>> (1080p) <<[19D9D43F]>>.mkv"')
+        print(f'''For example if filename is {colored('"[SubsPlease] Metallic Rouge - 08 (1080p) [19D9D43F].mkv"', 'cyan')} than''')
+        print(f'''You should change it to {colored('"[SubsPlease] Metallic Rouge - <<08>> (1080p) <<[19D9D43F]>>.mkv"', 'cyan')}''')
         print('''And don't type ""''')
         
         
@@ -176,7 +176,7 @@ class TokyoToshokanParser(ParserBase):
         
         print_colored_list(episodes, mapper=lambda a: a[0])
         
-        ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want me to create episode filter\n', len(episodes))
+        ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want to create episode filter\n', len(episodes))
         
         ep_filter = self.get_filter(episodes[ep_num-1][0], episodes)
         
