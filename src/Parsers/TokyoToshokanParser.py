@@ -36,7 +36,7 @@ class TokyoToshokanParser(ParserBase):
         return to_download
     
     def get_all_episodes_from_page(self, page, episodes, limit=None):
-        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">(.+?)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
+        pattern = r'''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">(.+?)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
         
         found = 0
         for i in re.findall(pattern, page.text):
