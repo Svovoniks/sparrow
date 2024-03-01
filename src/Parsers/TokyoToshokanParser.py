@@ -36,16 +36,16 @@ class TokyoToshokanParser(ParserBase):
         return to_download
     
     def get_all_episodes_from_page(self, page, episodes, limit=None):
-        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td>'''
+        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td><td[^(</td>)]+</td></tr><tr class="shade category_0"><td class="desc-bot">[^(?| Size:)]+| Size: ([^|]+) |'''
+        pattern = '''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">([^<]+)<span class="s"> </span>([^<]+)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
         
         found = 0
-        
         for i in re.findall(pattern, page.text):
             if limit != None and limit <= len(episodes):
                 break
             
             found += 1
-            episodes.append((i[1] + i[2], i[0]))
+            episodes.append((i[1] + i[2], i[0], i[3]))
         
         return found
     
@@ -91,7 +91,7 @@ class TokyoToshokanParser(ParserBase):
         return all_episodes
     
     def preprocess_title(self,  title):
-        return title.replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('\\', '')
+        return title.replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('\\', '').replace('.', '').replace('+', '')
     
     def process_user_filter(self, _filter):
         real_rgx = r'.*'
@@ -109,12 +109,13 @@ class TokyoToshokanParser(ParserBase):
             if i == '':
                 continue
             
-            full_re += self.preprocess_title(i) + real_rgx
+            full_re += re.escape(i) + real_rgx
         
         return full_re
     
     def apply_filter(self, real_filter, episodes):
-        return list(filter(lambda a: re.fullmatch(real_filter, self.preprocess_title(a[0])) !=  None, episodes))
+        print(real_filter, episodes[0][0])
+        return list(filter(lambda a: re.fullmatch(real_filter, (a[0])) !=  None, episodes))
             
     def get_filter(self, title, episodes):
         print('This website is an aggregator of shows from multiple sources')
@@ -143,7 +144,7 @@ class TokyoToshokanParser(ParserBase):
             
             print('\nAfter applying the filter only these episodes remain:')
             
-            print_colored_list(self.apply_filter(processed_filter, episodes), mapper=lambda a: a[0])
+            print_colored_list(self.apply_filter(processed_filter, episodes), mapper=lambda a: (a[0], a[2]))
             
             print('Is that correct?')
             print('Enter [y/n]')
@@ -174,7 +175,7 @@ class TokyoToshokanParser(ParserBase):
         
         print(f'Here is a list of all episode for {title}')
         
-        print_colored_list(episodes, mapper=lambda a: a[0])
+        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
         
         ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want to create episode filter\n', len(episodes))
         
