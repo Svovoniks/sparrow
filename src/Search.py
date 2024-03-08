@@ -36,14 +36,14 @@ class SearchEngine:
         
         if look_in == None or look_in in MAGIC_SEARCH_PARSERS:
             
-            return self.magic_search(query)
+            return self.magic_search(query, look_in)
         
         return PARSER_DICT[look_in]().find_show(query)
     
     def magic_search(self, query, look_in=None):
         tm = time.time()
         
-        self.get_data(look_in)
+        self.get_data(query, look_in)
         
         if len(self.data) == 0:
             return None
@@ -81,7 +81,7 @@ class SearchEngine:
     
     
     def get_data(self, key, look_in=None):
-        if look_in != None:
+        if look_in is not None:
             self.data[look_in] = PARSER_DICT[look_in]().get_all_shows(key)
             return
         

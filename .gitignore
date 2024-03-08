@@ -6,6 +6,8 @@ venv/
 # C extensions
 *.so
 
+*.ps1
+
 # Distribution / packaging
 bin/
 build/
