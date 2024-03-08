@@ -40,17 +40,7 @@ class SearchEngine:
         
         return PARSER_DICT[look_in]().find_show(query)
     
-    def magic_search(self, query, look_in=None):
-        tm = time.time()
-        
-        self.get_data(query, look_in)
-        
-        if len(self.data) == 0:
-            return None
-        
-        if all(map(lambda a: len(a) == 0, self.data.values())):
-            return None
-        
+    def get_best_match(self, query):
         best_match_parser = list(self.data.keys())[0]
         best_match = self.data[best_match_parser][0]
         
@@ -66,7 +56,21 @@ class SearchEngine:
                     
                     if min_dist == 0:
                         return (parser, best_match)
-                    
+        
+        return (parser, best_match)
+    
+    def magic_search(self, query, look_in=None):
+        tm = time.time()
+        
+        self.get_data(query, look_in)
+        
+        if len(self.data) == 0:
+            return None
+        
+        if all(map(lambda a: len(a) == 0, self.data.values())):
+            return None
+        
+        best_match_parser, best_match = self.get_best_match(query)
         
         print(f'Look up time {time.time() - tm:.3f} sec')
         
