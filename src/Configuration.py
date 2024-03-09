@@ -44,7 +44,7 @@ SAMPLE_CONFIG = {
     
 
 class ConfigUpdater:
-    def __init__(self, full_json: dict[str, str]) -> None:
+    def __init__(self, full_json) -> None:
         self.full_json = full_json
     
     def update(self, from_v: int):
@@ -71,7 +71,7 @@ class ConfigUpdater:
 
 class Configuration:
     
-    def __init__(self, full_json: dict[str, str]) -> None:
+    def __init__(self, full_json) -> None:
         config_ver = int(full_json.get(CONFIG_VER, '0'))
         if CURRENT_CONFIG_VER != config_ver:
             full_json = ConfigUpdater(full_json).update(config_ver)
