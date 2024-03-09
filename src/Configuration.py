@@ -1,4 +1,6 @@
 import json
+
+from termcolor import colored
 # from typing import List, Self
 from src.Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from src.Parsers.EZTVParser import EZTVParser, EZTV_PARSER_NAME
@@ -6,6 +8,13 @@ from src.Parsers.TokyoToshokanParser import TokyoToshokanParser, TOKYO_TOSHOKAN_
 from src.Show import Show
 from os.path import exists
 
+
+CURRENT_CONFIG_VER = 1
+CONFIG_VER = 'config_v'
+
+SCRIPT_LINE = 'script_line'
+TMP_FILE = 'tmp_file'
+TMP_FILE_STARTER = 'tmp_starter'
 DOWNLOAD_DIR = 'download_dir'
 SHOW_LIST = 'show_list'
 UPDATE_ON_APP_START = 'update_when_app_launched'
@@ -32,13 +41,44 @@ SAMPLE_CONFIG = {
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
 }
+    
+
+class ConfigUpdater:
+    def __init__(self, full_json: dict[str, str]) -> None:
+        self.full_json = full_json
+    
+    def update(self, from_v: int):
+        update_map = {
+            0: self.update_from_0_to_1,
+        }
+        
+        while from_v != CURRENT_CONFIG_VER:
+            from_v = update_map[from_v]()
+        
+        print(colored(f"Updated config version to {from_v}", 'green'))
+        
+        with open(CONFIG_FILE, 'w') as file:
+            json.dump(self.full_json, file)
+        
+        return self.full_json
+    
+    def update_from_0_to_1(self):
+        self.full_json.update({CONFIG_VER: 1})
+        self.full_json.update({'script_line': '@start "" "{}"\n'})
+        self.full_json.update({'tmp_file': 'tmp.bat'})
+        self.full_json.update({'tmp_starter': ''})
+        return 1
 
 class Configuration:
     
-    def __init__(self, full_json) -> None:
+    def __init__(self, full_json: dict[str, str]) -> None:
+        config_ver = int(full_json.get(CONFIG_VER, '0'))
+        if CURRENT_CONFIG_VER != config_ver:
+            full_json = ConfigUpdater(full_json).update(config_ver)
+        
         self.config_json = full_json
         self.show_list = [Show.from_json(i) for i in self.config_json[SHOW_LIST] if i != None]
-        
+    
     def __getitem__(self, arg):
         return self.config_json[arg]
     

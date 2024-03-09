@@ -3,13 +3,12 @@ from os.path import isdir
 from termcolor import colored
 import time
 
-from src.Configuration import Configuration, PARSER_DICT
 from src.Show import Show
 from src.ShowManager import ShowManager
 from src.TorrentUtils import TorrentEngine
 from src.Search import SearchEngine
 from src.utils import ask_for_num, print_colored_list, ask_for_input, verify_num_input
-
+from src.Configuration import SCRIPT_LINE, TMP_FILE, TMP_FILE_STARTER, Configuration, PARSER_DICT
 class UI:
     def __init__(self, config) -> None:
         self.config: Configuration = config
@@ -73,8 +72,9 @@ class UI:
             print("Everything seems to be up to date")
             return
         
-        torrent_engine = TorrentEngine()
-        
+        torrent_engine = TorrentEngine(self.config[SCRIPT_LINE], 
+                                        self.config[TMP_FILE],
+                                        self.config[TMP_FILE_STARTER])
         
         print('Queueing updates')
         for i in updates:
