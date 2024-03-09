@@ -5,7 +5,7 @@ from termcolor import colored
 from src.Parsers.ParserBase import ParserBase
 from src.Show import Show
 from src.TorrentUtils import MagnetChecker
-from src.utils import ask_for_input
+from src.utils import HiddenPrints, ask_for_input
 
 SUBS_PLEASE_PARSER_NAME = 'SubsPlease'
 
@@ -112,10 +112,12 @@ class SubsPleaseParser(ParserBase):
         
         for i in magnets:
             try:
-                filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
-                
-                if filename in download_folder_contents:
-                    return to_download
+                filename = ''
+                with HiddenPrints():
+                    filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
+                    
+                    if filename in download_folder_contents:
+                        return to_download
                 print(f'Missing "{filename}"')
                 to_download.append(i)
             except:

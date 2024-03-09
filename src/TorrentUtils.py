@@ -38,9 +38,10 @@ class MagnetChecker:
     async def get_filename(self):
         m2t = Magnet2Torrent(self.magnet)
         try:
+            filename = None
             with HiddenPrints():
                 filename, torrent_data = await m2t.retrieve_torrent()
-                return filename
+            return filename
         except:
             print("Couldn't check magnet link")
         

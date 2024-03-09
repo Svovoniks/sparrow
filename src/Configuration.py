@@ -5,6 +5,7 @@ from termcolor import colored
 from src.Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from src.Parsers.EZTVParser import EZTVParser, EZTV_PARSER_NAME
 from src.Parsers.TokyoToshokanParser import TokyoToshokanParser, TOKYO_TOSHOKAN_PARSER_NAME
+from src.Parsers.TheRARBGParser import TheRARBGParser, THE_RARBG_PARSER_NAME
 from src.Show import Show
 from os.path import exists
 
@@ -22,7 +23,8 @@ UPDATE_ON_APP_START = 'update_when_app_launched'
 PARSER_DICT = {
     SUBS_PLEASE_PARSER_NAME: SubsPleaseParser, 
     EZTV_PARSER_NAME: EZTVParser,
-    TOKYO_TOSHOKAN_PARSER_NAME: TokyoToshokanParser
+    TOKYO_TOSHOKAN_PARSER_NAME: TokyoToshokanParser,
+    THE_RARBG_PARSER_NAME: TheRARBGParser
 }
 
 MAGIC_SEARCH_PARSERS = [
@@ -32,6 +34,7 @@ MAGIC_SEARCH_PARSERS = [
 
 EXTERNAL_SEARCH_PARSERS = [
     TOKYO_TOSHOKAN_PARSER_NAME,
+    THE_RARBG_PARSER_NAME,
 ]
 
 CONFIG_FILE = "sys_torrent.cfg"
@@ -162,3 +165,4 @@ class Configuration:
             self.config_json == __value.config_json,
             self.show_list == __value.show_list
         ])
+
