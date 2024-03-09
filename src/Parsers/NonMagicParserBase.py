@@ -28,10 +28,7 @@ class NonMagicParserBase(ParserBase):
         
         to_download = []
         
-        # print(episodes)
-        # print(self.apply_filter(self.process_user_filter(show.filter), episodes))
         for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
-            print(episode)
             
             ans = self.get_magnet_and_filename(episode)
             
