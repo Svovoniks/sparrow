@@ -87,7 +87,9 @@ class ConfigUpdater:
             
             episodes = parser.apply_filter(parser.process_user_filter(show.filter), episodes)
             
-            print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
+            episodes.append(('None of these', ))
+            
+            print_colored_list(episodes, mapper=lambda a: a[0])
             
             num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
             

@@ -3,7 +3,7 @@ import textdistance
 import time
 from src.Show import Show
 from src.Configuration import EXTERNAL_SEARCH_PARSERS, MAGIC_SEARCH_PARSERS, PARSER_DICT, Configuration
-from src.utils import ask_for_input, print_colored_list, map_to_columns, verify_num_input
+from src.utils import ask_for_input, ask_for_num, print_colored_list, map_to_columns, verify_num_input
 
 class SearchEngine:
     def __init__(self) -> None:
@@ -81,8 +81,31 @@ class SearchEngine:
         
         show_filter = parser.get_show_filter(*best_match)
         
-        return Show(best_match[0], best_match_parser, show_filter, best_match[1], None)
+        print('Do you want to specifiy what episodes you already have? [y/n]')
+        
+        ans = ask_for_input('n (No)')
+        
+        
+        show = Show(best_match[0], best_match_parser, show_filter, best_match[1], None)
+        
+        if ans == 'y':
+            show.last_episode = self.get_last_episode(show)
+        
+        return show
     
+    def get_last_episode(self, show: Show):
+        parser = PARSER_DICT[show.parser_name]()
+        
+        episodes = parser.get_all_show_episodes(show, 200)
+            
+        episodes = parser.apply_filter(parser.process_user_filter(show.filter), episodes)
+        episodes.append(('None of these',))
+        
+        print_colored_list(episodes, mapper=lambda a: a[0])
+        
+        num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
+        
+        return episodes[num-1][0]
     
     def get_data(self, key, look_in=None):
         if look_in is not None:

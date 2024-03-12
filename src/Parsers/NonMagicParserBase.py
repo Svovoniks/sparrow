@@ -104,10 +104,25 @@ class NonMagicParserBase(ParserBase):
         
         ep_filter = self.get_filter(episodes[ep_num-1][0], episodes)
         
-        if ep_filter != None:
-            return ep_filter
+        if ep_filter is None:
+            return None
         
-        return None
+        print('Do you want to specifiy what episodes you already have? [y/n]')
+        
+        ans = ask_for_input('n (No)')
+        
+        last_episode = None
+        
+        if ans == 'y':
+            filtered_episodes = self.apply_filter(self.process_user_filter(ep_filter), episodes)
+            filtered_episodes.append(('None of these', ))
+            
+            print_colored_list(filtered_episodes, mapper=lambda a: a[0])
+            
+            num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
+            last_episode = filtered_episodes[num-1][0]
+        
+        return ep_filter, last_episode
     
     def process_query(self, query):
         '''
@@ -122,4 +137,4 @@ class NonMagicParserBase(ParserBase):
         if show_filter == None:
             return None
         
-        return Show(query, self.parser_name, show_filter, link, None)
+        return Show(query, self.parser_name, show_filter[0], link, show_filter[1])
