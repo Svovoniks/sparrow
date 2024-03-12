@@ -3,7 +3,7 @@ import textdistance
 import time
 from src.Show import Show
 from src.Configuration import EXTERNAL_SEARCH_PARSERS, MAGIC_SEARCH_PARSERS, PARSER_DICT, Configuration
-from src.utils import ask_for_input, print_colored_list, map_to_columns, verify_num_input
+from src.utils import ask_for_input, ask_for_num, print_colored_list, map_to_columns, verify_num_input
 
 class SearchEngine:
     def __init__(self) -> None:
@@ -41,23 +41,23 @@ class SearchEngine:
         return PARSER_DICT[look_in]().find_show(query)
     
     def get_best_match(self, query):
-        best_match_parser = list(self.data.keys())[0]
-        best_match = self.data[best_match_parser][0]
+        best_match_parser = None
+        best_match = None
         
-        min_dist = textdistance.levenshtein(best_match[0], query)
+        min_dist = None
         
         for parser, show_set in self.data.items():
             for i in show_set:
                 dis = textdistance.levenshtein(i[0], query)
-                if dis < min_dist:
+                if min_dist is None or dis < min_dist:
                     min_dist = dis
                     best_match = i
                     best_match_parser = parser
                     
                     if min_dist == 0:
-                        return (parser, best_match)
+                        return (best_match_parser, best_match)
         
-        return (parser, best_match)
+        return (best_match_parser, best_match)
     
     def magic_search(self, query, look_in=None):
         tm = time.time()
@@ -81,8 +81,31 @@ class SearchEngine:
         
         show_filter = parser.get_show_filter(*best_match)
         
-        return Show(best_match[0], best_match_parser, show_filter, best_match[1])
+        print('Do you want to specifiy what episodes you already have? [y/n]')
+        
+        ans = ask_for_input('n (No)')
+        
+        
+        show = Show(best_match[0], best_match_parser, show_filter, best_match[1], None)
+        
+        if ans == 'y':
+            show.last_episode = self.get_last_episode(show)
+        
+        return show
     
+    def get_last_episode(self, show: Show):
+        parser = PARSER_DICT[show.parser_name]()
+        
+        episodes = parser.get_all_show_episodes(show, 200)
+            
+        episodes = parser.apply_filter(parser.process_user_filter(show.filter), episodes)
+        episodes.append(('None of these',))
+        
+        print_colored_list(episodes, mapper=lambda a: a[0])
+        
+        num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
+        
+        return episodes[num-1][0]
     
     def get_data(self, key, look_in=None):
         if look_in is not None:
