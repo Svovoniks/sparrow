@@ -128,7 +128,8 @@ class EZTVParser(ParserBase):
     
     
     def get_show_filter(self, title, link):
-        episodes = self.get_all_show_episodes(link)
+        show = Show(title, '', '', link, '')
+        episodes = self.get_all_show_episodes(show)
         
         ep_filter = self.ask_for_filter(episodes, title)
         

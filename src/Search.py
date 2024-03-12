@@ -41,23 +41,23 @@ class SearchEngine:
         return PARSER_DICT[look_in]().find_show(query)
     
     def get_best_match(self, query):
-        best_match_parser = list(self.data.keys())[0]
-        best_match = self.data[best_match_parser][0]
+        best_match_parser = None
+        best_match = None
         
-        min_dist = textdistance.levenshtein(best_match[0], query)
+        min_dist = None
         
         for parser, show_set in self.data.items():
             for i in show_set:
                 dis = textdistance.levenshtein(i[0], query)
-                if dis < min_dist:
+                if min_dist is None or dis < min_dist:
                     min_dist = dis
                     best_match = i
                     best_match_parser = parser
                     
                     if min_dist == 0:
-                        return (parser, best_match)
+                        return (best_match_parser, best_match)
         
-        return (parser, best_match)
+        return (best_match_parser, best_match)
     
     def magic_search(self, query, look_in=None):
         tm = time.time()
