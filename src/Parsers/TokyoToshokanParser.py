@@ -22,8 +22,8 @@ class TokyoToshokanParser(NonMagicParserBase):
         key = re.sub(r'\s+', '+', key)
         return self.search_url.format(key)
     
-    def get_magnet_and_filename(self, episode):
-        return episode[1], episode[0]
+    def get_magnet(self, episode):
+        return episode[1]
     
     def get_all_episodes_from_page(self, page, episodes, limit=None):
         pattern = r'''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">(.+?)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
@@ -38,9 +38,8 @@ class TokyoToshokanParser(NonMagicParserBase):
         
         return found
     
-    def get_all_show_episodes(self, key, link, limit=200):
-        show_url = link
-        page = self.load_page(show_url)
+    def get_all_show_episodes(self, show: Show, limit):
+        page = self.load_page(show.link)
         
         if page == None:
             return []
@@ -56,7 +55,7 @@ class TokyoToshokanParser(NonMagicParserBase):
             page_id = 2
             
             while limit == None or len(all_episodes) < limit:
-                addon_page = self.load_page(show_url+f'&page={page_id}')
+                addon_page = self.load_page(show.link+f'&page={page_id}')
                 
                 if addon_page == None:
                     break

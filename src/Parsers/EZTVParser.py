@@ -17,30 +17,26 @@ class EZTVParser(ParserBase):
         self.all_shows_url = 'https://eztvx.to/showlist/'
         self.episode_num_pattern = r'(S\d\dE\d\d)'
         
-    def check_show(self, show: Show, download_folder_contents):
-        show_page = self.load_page(show.link)
-        if show_page == None:
-            return []
+    # def check_show(self, show: Show, download_folder_contents):
+    #     episodes = self.get_all_show_episodes(show.link)
         
-        episodes = self.get_all_show_episodes(show_page)
+    #     to_download = []
         
-        to_download = []
+    #     for idx in self.apply_filter(episodes, show.filter):
+    #         page = self.load_page(self.main_url + episodes[idx][0])
+            
+    #         magnet = self.get_magnet(page)
+    #         filename = self.get_torrent_filename(page)
+            
+    #         if filename == None: continue
+            
+    #         if filename in download_folder_contents:
+    #             return to_download
+            
+    #         print(f'Missing "{filename}"')
+    #         to_download.append(magnet)
         
-        for idx in self.apply_filter(episodes, show.filter):
-            page = self.load_page(self.main_url + episodes[idx][0])
-            
-            magnet = self.get_magnet(page)
-            filename = self.get_torrent_filename(page)
-            
-            if filename == None: continue
-            
-            if filename in download_folder_contents:
-                return to_download
-            
-            print(f'Missing "{filename}"')
-            to_download.append(magnet)
-        
-        return to_download
+    #     return to_download
     
     def get_torrent_filename(self, page):
         pattern = r'''<a href="([^"]+)" title="Download Torrent" rel="nofollow">'''
@@ -49,8 +45,10 @@ class EZTVParser(ParserBase):
         
         return tor_link[tor_link.rfind('/')+1:-8]
     
-    def get_magnet(self, page):
+    def get_magnet(self, episode):
         pattern = r'''<a href="([^"]+)" title="Magnet Link">'''
+        
+        page = self.load_page(self.main_url + episode[1])
         
         return re.search(pattern, page.text)[1]
         
@@ -70,38 +68,25 @@ class EZTVParser(ParserBase):
         return [(i[1], self.main_url + i[0]) for i in re.findall(pattern, page.text)]
     
     
-    def get_all_show_episodes(self, page):
-        '''
-        returns list of all episodes found on the given page in the format of [(sub_link_to_the_episode, episode_name_, episode_file_size), (...)]
-        '''
+    def get_all_show_episodes(self, show: Show):
+        page = self.load_page(show.link)
+        
+        if page is None:
+            return []
+        
         pattern = r'''<a href="([^"]+)" title="[^"]+" alt="([^"]+)\(([^"]+)\)" class="epinfo">[^"]+</a>\n</td>'''
         all_episodes = []
         
         for i in re.findall(pattern, page.text):
-            all_episodes.append(i)
+            all_episodes.append((i[1], i[0], i[2]))
         
         return all_episodes
-    
-    def print_all_episodes(self, all_episodes, ep_filter=None):
-        mx_name_len, mx_size_len = map(len, reduce(lambda tp1, tp2: (None, max(tp1[1], tp2[1], key=len), max(tp1[2], tp2[2], key=len)), all_episodes, (None, '', ''))[1:])
-        
-        filter_list = None
-        
-        if ep_filter != None:
-            filter_list = self.apply_filter(all_episodes, ep_filter)
-        else:
-            filter_list = range(len(all_episodes))
-        
-        print_colored_list(filter_list, mapper=lambda idx: ('{1:' + str(mx_name_len) + '}   {2:' + str(mx_size_len) + '}').format(*all_episodes[idx]))
         
     def get_filter(self, ep_title):
         return re.sub(self.episode_num_pattern, '<<episode_number>>', ep_title)
     
-    def apply_filter(self, episode_list, ep_filter):
-        '''
-        returns list of indexes of elements that satisfy ep_filter
-        '''
-        return [idx for idx, el in enumerate(episode_list) if self.get_filter(el[1]) == ep_filter]
+    def apply_filter(self, _filter, episodes):
+        return list(filter(lambda a: self.get_filter(a[0]) == _filter, episodes))
     
     
     def ask_for_filter(self, episodes, title):
@@ -112,15 +97,15 @@ class EZTVParser(ParserBase):
             exit(1)
         
         print(f'Here is a list of all episode for {title}')
-        self.print_all_episodes(episodes)
+        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
         
         ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want me to create episode filter\n', len(episodes))
         
-        ep_filter = self.get_filter(episodes[ep_num-1][1])
+        ep_filter = self.get_filter(episodes[ep_num-1][0])
         
         print('\nAfter applying the filter only these episodes remain:')
         
-        self.print_all_episodes(episodes, ep_filter)
+        print_colored_list(self.apply_filter(ep_filter, episodes), mapper=lambda a: (a[0], a[2]))
         
         print('Is that correct?')
         print('Enter [y/n]')
@@ -143,9 +128,7 @@ class EZTVParser(ParserBase):
     
     
     def get_show_filter(self, title, link):
-        page = self.load_page(link)
-        
-        episodes = self.get_all_show_episodes(page)
+        episodes = self.get_all_show_episodes(link)
         
         ep_filter = self.ask_for_filter(episodes, title)
         

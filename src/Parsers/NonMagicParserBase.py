@@ -9,41 +9,12 @@ class NonMagicParserBase(ParserBase):
     to use this as a superclass you need to implement:
         - "get_all_show_episodes"
         - "process_query"
-        - "get_magnet_and_filename"
+        - "get_magnet"
     and set class variable "parser_name"
     '''
     def __init__(self) -> None:
         super().__init__()
         self.parser_name = 'NonMagicParserBase'
-        
-        
-    def get_magnet_and_filename(self, episode):
-        '''
-        returns magnet link for a given episode (the "get_all_show_episodes" return tuple)
-        '''
-        raise NotImplementedError
-    
-    def check_show(self, show: Show, download_folder_contents):
-        episodes = self.get_all_show_episodes(show.title, show.link)
-        
-        to_download = []
-        
-        for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
-            
-            ans = self.get_magnet_and_filename(episode)
-            
-            if ans is None:
-                continue
-            
-            magnet, filename = ans
-            if filename in download_folder_contents:
-                return to_download
-            
-            print(f'Missing "{episode[0]}"')
-            to_download.append(magnet)
-        
-        return to_download
-    
     
     def process_user_filter(self, _filter):
         real_rgx = r'.*'
@@ -116,15 +87,8 @@ class NonMagicParserBase(ParserBase):
         
         return user_filter
     
-    def get_all_show_episodes(self, title, link, limit=200):
-        '''
-        return a list of all episodes that satisfy user query as a list[(filename, link_to_episode_page, file_size), ...]
-        the length of the list shouldn't exceed limit unless it's set to None
-        '''
-        raise NotImplementedError
-    
     def get_show_filter(self, title, link):
-        episodes = self.get_all_show_episodes(title, link)
+        episodes = self.get_all_show_episodes(Show(title, '', '', link, ''), 200)
         
         if len(episodes) == 0:
             print(colored(f'''"{title}" doesn't have any episodes at the moment''', 'red'))
@@ -158,4 +122,4 @@ class NonMagicParserBase(ParserBase):
         if show_filter == None:
             return None
         
-        return Show(query, self.parser_name, show_filter, link)
+        return Show(query, self.parser_name, show_filter, link, None)

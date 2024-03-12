@@ -7,14 +7,15 @@ from collections import defaultdict
 # from Parsers.ParserFactory import PARSER_MAP, get_parser_by_name
 
 
-REQUIRED_SHOW_FIELDS = ['show_title', 'parser', 'filter', 'link']
+REQUIRED_SHOW_FIELDS = ['show_title', 'parser', 'filter', 'link', 'last_episode']
 
 class Show:
-    def __init__(self, exact_title: str, parser_name: str, filter: str, link: str) -> None:
+    def __init__(self, exact_title: str, parser_name: str, filter: str, link: str, last_episode: str) -> None:
         self.title = exact_title
         self.link = link
         self.parser_name = parser_name
         self.filter = filter
+        self.last_episode = last_episode
         
         
     def to_json(self):
@@ -26,6 +27,7 @@ class Show:
             "parser": self.parser_name,
             "filter": self.filter,
             "link": self.link,
+            "last_episode": self.last_episode,
         }
         
         
@@ -54,7 +56,7 @@ class Show:
             print(f'Please fix it or remove it from the config file')
             return None
         
-        return Show(json_obj["show_title"], json_obj["parser"], json_obj["filter"], json_obj["link"])
+        return Show(json_obj["show_title"], json_obj["parser"], json_obj["filter"], json_obj["link"], json_obj["last_episode"])
     
     def __eq__(self, __value) -> bool:
         if __value == None:

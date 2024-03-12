@@ -81,7 +81,7 @@ class SearchEngine:
         
         show_filter = parser.get_show_filter(*best_match)
         
-        return Show(best_match[0], best_match_parser, show_filter, best_match[1])
+        return Show(best_match[0], best_match_parser, show_filter, best_match[1], None)
     
     
     def get_data(self, key, look_in=None):

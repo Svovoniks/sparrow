@@ -60,7 +60,7 @@ class UI:
         
     
     def list_shows(self):
-        mx_title_len = len(max(self.config.show_list, key=lambda show: len(show.title), default=Show('','','','')).title)
+        mx_title_len = len(max(self.config.show_list, key=lambda show: len(show.title), default=Show('','','','', '')).title)
         
         print_colored_list(self.config.show_list, mapper=lambda show: ('{0:' + str(mx_title_len) + '}').format(show.title) 
                             + f' [Source: {show.parser_name}]')
@@ -72,9 +72,11 @@ class UI:
             print("Everything seems to be up to date")
             return
         
-        torrent_engine = TorrentEngine(self.config[SCRIPT_LINE], 
-                                        self.config[TMP_FILE],
-                                        self.config[TMP_FILE_STARTER])
+        torrent_engine = TorrentEngine(
+            self.config[SCRIPT_LINE], 
+            self.config[TMP_FILE],
+            self.config[TMP_FILE_STARTER]
+        )
         
         print('Queueing updates')
         for i in updates:
@@ -99,7 +101,7 @@ class UI:
         show = engine.find_show(show_name)
         
         if show == None:
-            print("Search didn't return any results")
+            print(colored("Search didn't return any results", 'red'))
             return
         
         if show in self.config.show_list:

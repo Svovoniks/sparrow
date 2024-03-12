@@ -1,5 +1,6 @@
 import asyncio
 import re
+import json
 
 from termcolor import colored
 from src.Parsers.ParserBase import ParserBase
@@ -16,6 +17,9 @@ class SubsPleaseParser(ParserBase):
         self.search_url = 'https://subsplease.org/shows/'
         self.api_url = 'https://subsplease.org/api/?f=show&tz=Europe/Moscow&sid={}'
         
+    
+    def get_magnet(self, episode):
+        return episode[1]
         
     def parse_all_shows(self):
         """
@@ -77,12 +81,11 @@ class SubsPleaseParser(ParserBase):
         
         return found[1]
     
+    def apply_filter(self, _filter, episodes):
+        return list(filter(lambda a: a[2] == _filter, episodes))
     
-    def get_magnets(self, show_page, show_filter):
-        """
-        returns magnet links from show_page
-        """
-        sid = self.get_sid(show_page)
+    def get_all_show_episodes(self, show: Show, limit):
+        sid = self.get_sid(show.link)
         
         res = []
         
@@ -94,36 +97,37 @@ class SubsPleaseParser(ParserBase):
         if api_resp == None:
             return res
         
-        pattern = r'{"res":"' + show_filter + '","torrent":"[^"]+","magnet":"([^"]+)","xdcc":"[^"]+"}'
+        js = json.loads(api_resp.text)
         
-        for i in re.findall(pattern, api_resp.text):
-            res.append(i)
+        for i in js['episode'].keys():
+            for j in js['episode'][i]['downloads']:
+                res.append((i, j['magnet'], j['res']))
             
         return res
         
     
-    def check_show(self, show: Show, download_folder_contents):
-        """
-        returns list of magnet links for new episodes of the show named title
-        """
-        magnets = self.get_magnets(show.link, show.filter)
+    # def check_show(self, show: Show, download_folder_contents):
+    #     """
+    #     returns list of magnet links for new episodes of the show named title
+    #     """
+    #     magnets = self.get_magnets(show.link, show.filter)
         
-        to_download = []
+    #     to_download = []
         
-        for i in magnets:
-            try:
-                filename = ''
-                with HiddenPrints():
-                    filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
+    #     for i in magnets:
+    #         try:
+    #             filename = ''
+    #             with HiddenPrints():
+    #                 filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
                     
-                    if filename in download_folder_contents:
-                        return to_download
-                print(f'Missing "{filename}"')
-                to_download.append(i)
-            except:
-                pass
+    #                 if filename in download_folder_contents:
+    #                     return to_download
+    #             print(f'Missing "{filename}"')
+    #             to_download.append(i)
+    #         except:
+    #             pass
             
-        return to_download
+    #     return to_download
     
     
     def get_all_shows(self, key):

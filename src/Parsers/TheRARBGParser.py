@@ -1,6 +1,7 @@
 # from typing import List, Optional
 import asyncio
 import re
+import html
 import requests
 import urllib.parse
 from termcolor import colored
@@ -19,11 +20,9 @@ class TheRARBGParser(NonMagicParserBase):
         self.search_url = 'https://therarbg.com/get-posts/keywords:{}:category:Movies:category:TV/'
         self.page_url = '?page={}&'
         self.main_url = 'https://therarbg.com'
-        
     
     def get_magnet(self, episode):
         page = self.load_page(self.main_url + episode[1])
-        
         if page is None:
             return None
         
@@ -32,33 +31,33 @@ class TheRARBGParser(NonMagicParserBase):
         if sc is None:
             return None
         
-        return sc[1]
+        return html.unescape(sc[1])
     
-    def strip_filename(self, filename: str):
-        return filename.replace(' ', '').replace('.', '').replace('-', '')
+    # def strip_filename(self, filename: str):
+    #     return filename.replace(' ', '').replace('.', '').replace('-', '')
     
-    def check_show(self, show: Show, download_folder_contents):
-        episodes = self.get_all_show_episodes(show.title, show.link)
+    # def check_show(self, show: Show, download_folder_contents):
+    #     episodes = self.get_all_show_episodes(show.title, show.link)
         
-        to_download = []
+    #     to_download = []
         
-        download_folder_contents = list(map(self.strip_filename, download_folder_contents))
+    #     download_folder_contents = list(map(self.strip_filename, download_folder_contents))
         
-        for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
-            if self.strip_filename(episode[0]) in download_folder_contents:
-                return to_download
+    #     for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
+    #         if self.strip_filename(episode[0]) in download_folder_contents:
+    #             return to_download
             
-            print(f'Missing "{episode[0]}"')
+    #         print(f'Missing "{episode[0]}"')
             
-            magnet = self.get_magnet(episode)
+    #         magnet = self.get_magnet(episode)
             
-            if magnet is None:
-                print(colored(f"Couldn't get magnet link for {episode[0]}", 'red'))
-                continue
+    #         if magnet is None:
+    #             print(colored(f"Couldn't get magnet link for {episode[0]}", 'red'))
+    #             continue
             
-            to_download.append(self.get_magnet(episode))
+    #         to_download.append(self.get_magnet(episode))
         
-        return to_download
+    #     return to_download
     
     def process_query(self, query):
         return self.search_url.format(urllib.parse.quote(query))
@@ -104,12 +103,12 @@ class TheRARBGParser(NonMagicParserBase):
         return next_sc[2]
         
     
-    def get_all_show_episodes(self, title, link, limit=200):
+    def get_all_show_episodes(self, show: Show, limit):
         page = self.load_page('https://therarbg.com/post-detail/68d86c/silo-2023-s01-1080p-ds4k-atvp-webrip-ddp5-1-10bit-x265-tovar/')
         
         episodes = []
         
-        page = self.load_page(link)
+        page = self.load_page(show.link)
         
         if page is None:
             return episodes
@@ -121,7 +120,7 @@ class TheRARBGParser(NonMagicParserBase):
             if next_page_num is None:
                 break
             
-            page = self.load_page(link + self.page_url.format(next_page_num))
+            page = self.load_page(show.link + self.page_url.format(next_page_num))
             
             if page is None:
                 break

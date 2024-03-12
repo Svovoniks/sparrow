@@ -8,9 +8,10 @@ from src.Parsers.TokyoToshokanParser import TokyoToshokanParser, TOKYO_TOSHOKAN_
 from src.Parsers.TheRARBGParser import TheRARBGParser, THE_RARBG_PARSER_NAME
 from src.Show import Show
 from os.path import exists
+from src.utils import ask_for_num, print_colored_list
 
 
-CURRENT_CONFIG_VER = 1
+CURRENT_CONFIG_VER = 2
 CONFIG_VER = 'config_v'
 
 SCRIPT_LINE = 'script_line'
@@ -43,8 +44,11 @@ REQUIRED_CONFIG_FIELDS = ['download_dir', 'show_list']
 SAMPLE_CONFIG = {
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
+    SCRIPT_LINE: '@start "" "{}"\n',
+    TMP_FILE: 'tmp.bat',
+    TMP_FILE_STARTER: '',
 }
-    
+
 
 class ConfigUpdater:
     def __init__(self, full_json) -> None:
@@ -53,6 +57,7 @@ class ConfigUpdater:
     def update(self, from_v: int):
         update_map = {
             0: self.update_from_0_to_1,
+            1: self.update_from_1_to_2,
         }
         
         while from_v != CURRENT_CONFIG_VER:
@@ -71,6 +76,53 @@ class ConfigUpdater:
         self.full_json.update({'tmp_file': 'tmp.bat'})
         self.full_json.update({'tmp_starter': ''})
         return 1
+    
+    def get_last_episodes(self):
+        for i in self.full_json['show_list']:
+            show = Show.from_json(i)
+            print(colored(f'Updating {show.title}', 'green'))
+            parser = PARSER_DICT[show.parser_name]()
+            
+            episodes = parser.get_all_show_episodes(show, 200)
+            
+            episodes = parser.apply_filter(parser.process_user_filter(show.filter), episodes)
+            
+            print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
+            
+            num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
+            
+            i.update({'last_episode': episodes[num-1][0]})
+    
+    def update_from_1_to_2(self):
+        backup_file = 'sys_torrent_backup_V2.cfg'
+        
+        with open(backup_file, 'w') as file:
+            json.dump(self.full_json, file)
+        
+        self.full_json.update({CONFIG_VER: 2})
+        
+        print('In this update i changed how this app works')
+        print('It should work way faster now')
+        print('But now i need to store more data than before')
+        print('(I need to know the last episode i downloaded for each show)')
+        print("And your current config dosen't have it")
+        print("There are two ways i can get it")
+        print(''' - 1: I can set it to None and wait for next "update all" and that should do it''')
+        print(''' - 2: I can ask you for it (i'll help a little)\n''')
+        
+        print("I am not a 100% on this one so i'd recommend you try 1 and if that fails 2")
+        print(f'Just in case i made a backup in "{backup_file}"')
+        
+        num = ask_for_num('What should i do?', 2)
+        
+        
+        for show in self.full_json['show_list']:
+            show.update({'last_episode': None})
+        
+        if num == 2:
+            self.get_last_episodes()
+            
+        return 2
 
 class Configuration:
     
@@ -107,6 +159,12 @@ class Configuration:
         self.config_json[SHOW_LIST].remove(show.to_json())
         self.show_list.remove(show)
     
+    def update_show(self, show: Show):
+        for idx in range(len(self.config_json[SHOW_LIST])):
+            if Show.from_json(self.config_json[SHOW_LIST][idx]) == show:
+                self.config_json[SHOW_LIST][idx] = show.to_json()
+                return
+            
     
     # builds json object from self
     def build_json(self):

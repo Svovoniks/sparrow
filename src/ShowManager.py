@@ -10,20 +10,23 @@ class ShowManager:
         """
         returns list of magnet links for new episodes for tracked shows
         """
-        downloaded = set(listdir(self.config[DOWNLOAD_DIR]))
-        
         to_download = []
         
         for i in self.config.show_list:
             print(f'checking "{i.title}"')
-            updates = PARSER_DICT[i.parser_name]().check_show(i, downloaded)
+            pr_len = len(to_download)
+            last_episode = PARSER_DICT[i.parser_name]().check_show(i, to_download)
             
-            if len(updates) > 0:
-                print(f'Found {len(updates)} new episodes')
-                to_download.extend(updates)
+            new_episodes = len(to_download) - pr_len
+            
+            if new_episodes > 0:
+                print(f'Episodes found: {new_episodes}')
+                i.last_episode = last_episode
+                self.config.update_show(i)
             else:
-                print(f'{i.title} is already up to date')
+                print(f'"{i.title}" is already up to date')
         
+        self.config.update_config()
         return to_download
     
     @staticmethod
