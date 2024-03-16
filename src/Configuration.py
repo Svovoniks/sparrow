@@ -42,6 +42,7 @@ CONFIG_FILE = "sys_torrent.cfg"
 REQUIRED_CONFIG_FIELDS = ['download_dir', 'show_list']
 
 SAMPLE_CONFIG = {
+    CONFIG_VER: CURRENT_CONFIG_VER,
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
     SCRIPT_LINE: '@start "" "{}"\n',
