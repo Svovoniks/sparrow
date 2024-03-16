@@ -69,7 +69,7 @@ class TheRARBGParser(NonMagicParserBase):
             return f"Unknown size ({size_str})"
         return f'{sc[1]} {sc[2]}'
     
-    def get_all_shows_from_page(self, page, episodes, limit):
+    def get_all_shows_from_page(self, page, episodes, limit, stop_after=None):
         # entry_pattern = r'''<tr class="list-entry [^"]+">[\s\S]+?<a href="([^"]+)"[^>]+>([^<]+)<[\s\S]+?class="sizeCell"[\s\S]+?>([^<]+)<'''
         entry_pattern = r'''<tr class="list-entry[^"]*">[\s\S]+?<a[\s\S]+?href="([^"]+)"[^>]+>([^<]+)<[\s\S]+?class="sizeCell"[\s\S]+?>([^<]+)<'''
         # ^^^ (link_to_the_post, file_name, size) ^^^
@@ -77,6 +77,9 @@ class TheRARBGParser(NonMagicParserBase):
         found = 0
         
         for i in re.findall(entry_pattern, page.text):
+            if stop_after == i[1] and stop_after is not None:
+                return 0
+            
             if len(episodes) < limit:
                 found += 1
                 episodes.append((i[1], i[0], self.retrieve_size(i[2])))
@@ -103,7 +106,7 @@ class TheRARBGParser(NonMagicParserBase):
         return next_sc[2]
         
     
-    def get_all_show_episodes(self, show: Show, limit):
+    def get_all_show_episodes(self, show: Show, limit, stop_after=None):
         page = self.load_page('https://therarbg.com/post-detail/68d86c/silo-2023-s01-1080p-ds4k-atvp-webrip-ddp5-1-10bit-x265-tovar/')
         
         episodes = []
@@ -113,7 +116,7 @@ class TheRARBGParser(NonMagicParserBase):
         if page is None:
             return episodes
         
-        found = self.get_all_shows_from_page(page, episodes, limit)
+        found = self.get_all_shows_from_page(page, episodes, limit, stop_after)
         
         while True:
             next_page_num = self.try_get_next_page(page)
@@ -125,7 +128,7 @@ class TheRARBGParser(NonMagicParserBase):
             if page is None:
                 break
             
-            found = self.get_all_shows_from_page(page, episodes, limit)
+            found = self.get_all_shows_from_page(page, episodes, limit, stop_after)
             
             if found == 0 or len(episodes) >= limit:
                 break

@@ -68,7 +68,7 @@ class EZTVParser(ParserBase):
         return [(i[1], self.main_url + i[0]) for i in re.findall(pattern, page.text)]
     
     
-    def get_all_show_episodes(self, show: Show):
+    def get_all_show_episodes(self, show: Show, limit=200, stop_after=None):
         page = self.load_page(show.link)
         
         if page is None:
@@ -78,6 +78,9 @@ class EZTVParser(ParserBase):
         all_episodes = []
         
         for i in re.findall(pattern, page.text):
+            if stop_after == i[1] and stop_after is not None:
+                break
+            
             all_episodes.append((i[1], i[0], i[2]))
         
         return all_episodes

@@ -22,7 +22,7 @@ class ParserBase:
         '''
         raise NotImplementedError
     
-    def get_all_show_episodes(self, show, limit):
+    def get_all_show_episodes(self, show, limitб, stop_after=None):
         '''
         return a list of all episodes that satisfy user query as a list[(episode_title, ... ), ...]
         the length of the list shouldn't exceed limit unless it's set to None
@@ -30,7 +30,7 @@ class ParserBase:
         raise NotImplementedError
     
     def check_show(self, show: Show, to_download):
-        episodes = self.get_all_show_episodes(show, 200)
+        episodes = self.get_all_show_episodes(show, 200, show.last_episode)
         
         new_last = None
         
