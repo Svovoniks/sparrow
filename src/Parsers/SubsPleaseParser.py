@@ -84,7 +84,7 @@ class SubsPleaseParser(ParserBase):
     def apply_filter(self, _filter, episodes):
         return list(filter(lambda a: a[2] == _filter, episodes))
     
-    def get_all_show_episodes(self, show: Show, limit):
+    def get_all_show_episodes(self, show: Show, limit, stop_after=None):
         sid = self.get_sid(show.link)
         
         res = []
