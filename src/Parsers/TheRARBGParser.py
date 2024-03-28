@@ -86,7 +86,6 @@ class TheRARBGParser(NonMagicParserBase):
         episodes = []
         
         page = self.load_page(show.link)
-        print(show.link)
         
         if page is None:
             return episodes
