@@ -25,7 +25,7 @@ class TokyoToshokanParser(NonMagicParserBase):
     def get_magnet(self, episode):
         return episode[1]
     
-    def get_all_episodes_from_page(self, page, episodes, limit=None):
+    def get_all_episodes_from_page(self, page, episodes, limit=None, stop_after=None):
         pattern = r'''<td class="desc-top"><a href="([^"]+)"><span class="sprite_magnet"></span></a> <a rel="nofollow" type="application/x-bittorrent" href="[^"]+">(.+?)</a></td><td[^>]+>.+?</td></tr>.+?\| Size: (.+?) \|'''
         
         found = 0
@@ -33,12 +33,15 @@ class TokyoToshokanParser(NonMagicParserBase):
             if limit != None and limit <= len(episodes):
                 break
             
+            if stop_after == i[1] and stop_after is not None:
+                return 0
+            
             found += 1
             episodes.append((i[1].replace('<span class="s"> </span>', ''), i[0], i[2]))
         
         return found
     
-    def get_all_show_episodes(self, show: Show, limit):
+    def get_all_show_episodes(self, show: Show, limit, stop_after=None):
         page = self.load_page(show.link)
         
         if page == None:
@@ -49,7 +52,7 @@ class TokyoToshokanParser(NonMagicParserBase):
         all_episodes = []
         
         addon_pages_str = re.search(addon_page_holder_pattern, page.text)
-        self.get_all_episodes_from_page(page, all_episodes, limit)
+        self.get_all_episodes_from_page(page, all_episodes, limit, stop_after)
         
         if addon_pages_str != None:
             page_id = 2
@@ -60,7 +63,7 @@ class TokyoToshokanParser(NonMagicParserBase):
                 if addon_page == None:
                     break
                 
-                found = self.get_all_episodes_from_page(addon_page, all_episodes, limit)
+                found = self.get_all_episodes_from_page(addon_page, all_episodes, limit, stop_after)
                 
                 if found == 0:
                     break
