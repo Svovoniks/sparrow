@@ -104,30 +104,6 @@ class SubsPleaseParser(ParserBase):
                 res.append((i, j['magnet'], j['res']))
             
         return res
-        
-    
-    # def check_show(self, show: Show, download_folder_contents):
-    #     """
-    #     returns list of magnet links for new episodes of the show named title
-    #     """
-    #     magnets = self.get_magnets(show.link, show.filter)
-        
-    #     to_download = []
-        
-    #     for i in magnets:
-    #         try:
-    #             filename = ''
-    #             with HiddenPrints():
-    #                 filename = asyncio.run(MagnetChecker(i).get_filename())[:-8]
-                    
-    #                 if filename in download_folder_contents:
-    #                     return to_download
-    #             print(f'Missing "{filename}"')
-    #             to_download.append(i)
-    #         except:
-    #             pass
-            
-    #     return to_download
     
     
     def get_all_shows(self, key):

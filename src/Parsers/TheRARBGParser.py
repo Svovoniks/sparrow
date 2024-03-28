@@ -33,32 +33,6 @@ class TheRARBGParser(NonMagicParserBase):
         
         return html.unescape(sc[1])
     
-    # def strip_filename(self, filename: str):
-    #     return filename.replace(' ', '').replace('.', '').replace('-', '')
-    
-    # def check_show(self, show: Show, download_folder_contents):
-    #     episodes = self.get_all_show_episodes(show.title, show.link)
-        
-    #     to_download = []
-        
-    #     download_folder_contents = list(map(self.strip_filename, download_folder_contents))
-        
-    #     for episode in self.apply_filter(self.process_user_filter(show.filter), episodes):
-    #         if self.strip_filename(episode[0]) in download_folder_contents:
-    #             return to_download
-            
-    #         print(f'Missing "{episode[0]}"')
-            
-    #         magnet = self.get_magnet(episode)
-            
-    #         if magnet is None:
-    #             print(colored(f"Couldn't get magnet link for {episode[0]}", 'red'))
-    #             continue
-            
-    #         to_download.append(self.get_magnet(episode))
-        
-    #     return to_download
-    
     def process_query(self, query):
         return self.search_url.format(urllib.parse.quote(query))
     
@@ -70,7 +44,6 @@ class TheRARBGParser(NonMagicParserBase):
         return f'{sc[1]} {sc[2]}'
     
     def get_all_shows_from_page(self, page, episodes, limit):
-        # entry_pattern = r'''<tr class="list-entry [^"]+">[\s\S]+?<a href="([^"]+)"[^>]+>([^<]+)<[\s\S]+?class="sizeCell"[\s\S]+?>([^<]+)<'''
         entry_pattern = r'''<tr class="list-entry[^"]*">[\s\S]+?<a[\s\S]+?href="([^"]+)"[^>]+>([^<]+)<[\s\S]+?class="sizeCell"[\s\S]+?>([^<]+)<'''
         # ^^^ (link_to_the_post, file_name, size) ^^^
         
@@ -104,11 +77,10 @@ class TheRARBGParser(NonMagicParserBase):
         
     
     def get_all_show_episodes(self, show: Show, limit):
-        page = self.load_page('https://therarbg.com/post-detail/68d86c/silo-2023-s01-1080p-ds4k-atvp-webrip-ddp5-1-10bit-x265-tovar/')
-        
         episodes = []
         
         page = self.load_page(show.link)
+        print(show.link)
         
         if page is None:
             return episodes

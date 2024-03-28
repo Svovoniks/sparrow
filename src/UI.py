@@ -153,5 +153,3 @@ class UI:
             config = UI.ask_for_config()
             
         return UI(config)
-    
-# UI(None).add_show()
