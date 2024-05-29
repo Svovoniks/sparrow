@@ -52,7 +52,7 @@ class TheRARBGParser(NonMagicParserBase):
         
         for i in re.findall(entry_pattern, page.text):
             if stop_after == i[1] and stop_after is not None:
-                return 0
+                return 0 # tells caller to stop calling this method
             
             if len(episodes) < limit:
                 found += 1
@@ -81,8 +81,6 @@ class TheRARBGParser(NonMagicParserBase):
         
     
     def get_all_show_episodes(self, show: Show, limit, stop_after=None):
-        page = self.load_page('https://therarbg.com/post-detail/68d86c/silo-2023-s01-1080p-ds4k-atvp-webrip-ddp5-1-10bit-x265-tovar/')
-        
         episodes = []
         
         page = self.load_page(show.link)
@@ -92,7 +90,7 @@ class TheRARBGParser(NonMagicParserBase):
         
         found = self.get_all_shows_from_page(page, episodes, limit, stop_after)
         
-        while True:
+        while found != 0:
             next_page_num = self.try_get_next_page(page)
             if next_page_num is None:
                 break
@@ -104,7 +102,7 @@ class TheRARBGParser(NonMagicParserBase):
             
             found = self.get_all_shows_from_page(page, episodes, limit, stop_after)
             
-            if found == 0 or len(episodes) >= limit:
+            if len(episodes) >= limit:
                 break
         
         return episodes
