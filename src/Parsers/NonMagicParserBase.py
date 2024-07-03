@@ -96,7 +96,7 @@ class NonMagicParserBase(ParserBase):
             print(colored(f"Exiting", 'red'))
             exit(1)
         
-        print(f'Here is a list of all episode for {title}')
+        print(f'Here is a list of all episodes for {title}')
         
         print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
         

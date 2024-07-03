@@ -36,7 +36,7 @@ class UI:
         print('You can:')
         
         print_colored_list(screen_list, mapper=lambda a: a[1])
-        print("What do you want?\nEnter number or the first word of desired action")
+        print("What do you want?\nEnter number or the first word of the action you want to perform")
         
         next_screen = ask_for_input('exit')
         
@@ -78,7 +78,7 @@ class UI:
             self.config[TMP_FILE_STARTER]
         )
         
-        print('Queueing updates')
+        print('Staging bupdates')
         for i in updates:
             torrent_engine.add_download(i)
         
@@ -141,7 +141,7 @@ class UI:
         
         print(colored("You are all set", 'green'))
         print(colored("Please don't remove last episode of each show", 'green'))
-        print(colored("so i know what you've watched already", 'green'))
+        print(colored("So i know what you've watched already", 'green'))
         return config
     
     
