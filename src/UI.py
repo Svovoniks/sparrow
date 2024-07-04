@@ -78,7 +78,7 @@ class UI:
             self.config[TMP_FILE_STARTER]
         )
         
-        print('Staging bupdates')
+        print('Staging updates')
         for i in updates:
             torrent_engine.add_download(i)
         
