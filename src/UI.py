@@ -15,9 +15,14 @@ class UI:
         self.show_manager: ShowManager = ShowManager(config)
     
     @staticmethod
-    def start():
+    def start(args):
         ui = UI.setup_UI()
-        ui.main_screen()        
+        if len(args) == 1:
+            match args[0]:
+                case 'update': ui.update_all() 
+                case _: ui.main_screen()
+        else:
+            ui.main_screen()        
     
     def main_screen(self):
         screen_list = [
