@@ -17,10 +17,13 @@ class UI:
     @staticmethod
     def start(args):
         ui = UI.setup_UI()
+
+        screen_map = {
+            'update': ui.update_all,
+        }
+
         if len(args) == 1:
-            match args[0]:
-                case 'update': ui.update_all() 
-                case _: ui.main_screen()
+            screen_map.get(args[0], ui.main_screen)()
         else:
             ui.main_screen()        
     
