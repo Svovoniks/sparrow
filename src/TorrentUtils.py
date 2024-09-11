@@ -13,7 +13,7 @@ class TorrentEngine:
         while exists(self.tmp_file):
             self.tmp_file = 'new' + self.tmp_file
 
-        self.start_command = filter(lambda a: a != '', [tmp_file_starter, self.tmp_file])
+        self.start_command = list(filter(lambda a: a != '', [tmp_file_starter, self.tmp_file]))
 
     def add_download(self, magnet: str):
         self.script += self.script_line.format(magnet)

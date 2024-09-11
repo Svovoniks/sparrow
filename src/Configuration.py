@@ -48,7 +48,7 @@ SAMPLE_CONFIG_WINDOWS = {
     SHOW_LIST: [],
     SCRIPT_LINE: '@start "" "{}"\n',
     TMP_FILE: 'tmp.bat',
-    TMP_FILE_STARTER: 'start',
+    TMP_FILE_STARTER: '',
 }
 
 SAMPLE_CONFIG_LINUX = {
