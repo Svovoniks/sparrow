@@ -1,5 +1,5 @@
 magnet2torrent==1.2.1
-requests==2.31.0
+requests==2.32.2
 textdistance==4.6.1
 termcolor==2.4.0
 colorama==0.4.6
