@@ -41,7 +41,7 @@ class ParserBase:
             if show.last_episode is not None and show.last_episode == episode[0]:
                 return new_last
 
-            print(f'Missing "{episode[0]}"')
+            print(f'Missing "{episode[0].strip()}"')
             to_download.append(self.get_magnet(episode))
 
         return new_last
@@ -57,7 +57,7 @@ class ParserBase:
     def get_show_filter(self, title, link):
         return ''
 
-    def load_page(self, url, cookies=[]):
+    def load_page(self, url, cookies=None):
         """loads a url
         Args:
             url (str): _description_
@@ -67,10 +67,18 @@ class ParserBase:
             Response: otherwise
         """
         try:
-            resp = requests.get(url, cookies=cookies)
+            session = requests.Session()
+            if cookies:
+                for k, v in cookies.items():
+                    session.cookies.set(k, v)
+
+            session.headers.update({
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            })
+            resp = session.get(url, )
 
             if resp.status_code != 200:
-                print(colored(f"Couldn't load {url}", 'red'))
+                print(colored(f"Couldn't load '{url}", 'red'))
                 return None
         except:
             print(colored(f"Couldn't load {url}", 'red'))

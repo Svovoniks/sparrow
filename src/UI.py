@@ -1,18 +1,22 @@
-from functools import reduce
 from os.path import isdir
 from termcolor import colored
-import time
-
 from src.Show import Show
 from src.ShowManager import ShowManager
 from src.TorrentUtils import TorrentEngine
 from src.Search import SearchEngine
-from src.utils import ask_for_num, print_colored_list, ask_for_input, verify_num_input
-from src.Configuration import SCRIPT_LINE, TMP_FILE, TMP_FILE_STARTER, Configuration, PARSER_DICT
+from src.utils import ask_for_num, print_colored_list, ask_for_input
+from src.Configuration import SCRIPT_LINE, TMP_FILE, TMP_FILE_STARTER, Configuration
+
+
+
 class UI:
     def __init__(self, config) -> None:
         self.config: Configuration = config
         self.show_manager: ShowManager = ShowManager(config)
+
+    def handle_exit(self):
+        print(colored("\n*** Exiting ***\n", "green"))
+        exit()
 
     @staticmethod
     def start(args):
@@ -33,9 +37,10 @@ class UI:
             ('add', 'add show', self.add_show),
             ('remove', 'remove show', self.remove_show),
             ('list', 'list tracked shows', self.list_shows_screen),
+            ('exit', '"" | exit', self.handle_exit),
         ]
 
-        screens_map = {}
+        screens_map = {'': self.handle_exit}
 
         for idx, el_tp in enumerate(screen_list):
             screens_map[str(idx+1)] = el_tp[2]
@@ -46,11 +51,17 @@ class UI:
         print_colored_list(screen_list, mapper=lambda a: a[1])
         print("What do you want?\nEnter number or the first word of the action you want to perform")
 
-        next_screen = ask_for_input('exit')
-
         print()
 
-        screens_map.get(next_screen, exit)()
+        while True:
+            next_screen = ask_for_input('ask again')
+
+            if next_screen in screens_map:
+                break
+
+            print(colored("I beg your pardon??", 'red'))
+
+        screens_map[next_screen]()
 
         print()
 

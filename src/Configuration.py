@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 
 from termcolor import colored
@@ -245,4 +246,7 @@ class Configuration:
             self.config_json == __value.config_json,
             self.show_list == __value.show_list
         ])
+
+    def __repr__(self) -> str:
+        return f"show list:{self.show_list}"
 

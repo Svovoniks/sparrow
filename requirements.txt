@@ -3,3 +3,4 @@ requests==2.32.2
 textdistance==4.6.1
 termcolor==2.4.0
 colorama==0.4.6
+pyperclip==1.9.0
