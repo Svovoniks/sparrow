@@ -72,6 +72,12 @@ class UpdateCommand(Command):
 
         return MainScreenCommand()
 
+class UpdateSilentCommand(Command):
+    @visual_wrapper
+    def execute(self, state, cookie=None) -> 'Command | None':
+        UpdateCommand().execute(state)
+        return None
+
 class AddCommand(Command):
 
     @visual_wrapper
@@ -226,7 +232,7 @@ class StartUI(Command):
             state.config = config
 
         quick_actions = {
-            'update': UpdateCommand,
+            'update': UpdateSilentCommand,
         }
 
         if len(state.startup_args) == 1:
