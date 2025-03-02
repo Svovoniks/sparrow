@@ -86,7 +86,7 @@ class AddCommand(Command):
             print('Enter name of the show you want to add')
             show_name = ask_for_input('get confused')
         else:
-            print(f'\n{colored("Got cookie: \"", "green")}{colored(cookie, "white")}{colored("\"", "green")}\n')
+            print(f'''\n{colored('Got cookie: "', "green")}{colored(cookie, "white")}{colored('"', "green")}\n''')
             show_name = cookie
 
         if show_name == '':
@@ -130,11 +130,11 @@ class RemoveCommand(Command):
     def execute(self, state, cookie=None) -> 'Command | None':
         show_titles = {show.title: idx for idx, show in enumerate(state.config.show_list)}
         if cookie in show_titles:
-            print(f'\n{colored("Got cookie: \"", "green")}{colored(cookie, "white")}{colored("\"", "green")}\n')
+            print(f'''\n{colored('Got cookie: "', "green")}{colored(cookie, "white")}{colored('"', "green")}\n''')
             to_delete = show_titles[cookie]
         else:
             if cookie:
-                print(f'\n{colored("Discarded cookie: \"", "red")}{colored(cookie, "white")}{colored("\"", "red")}\n')
+                print(f'''\n{colored('Discarded cookie: "', "red")}{colored(cookie, "white")}{colored('"', "red")}\n''')
 
             ShowShowListCommand().execute(state)
             to_delete = ask_for_num("Choose show to delete\nEnter number that corresponds to the show", len(state.config.show_list))-1
