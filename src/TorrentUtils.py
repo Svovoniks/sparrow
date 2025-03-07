@@ -1,3 +1,4 @@
+import sys
 import subprocess
 from magnet2torrent import Magnet2Torrent
 from src.utils import HiddenPrints
@@ -10,17 +11,20 @@ class TorrentEngine:
 
 
     def add_download(self, magnet: str):
-        dw = self.script_line[:]
-        dw[self.magnet_location] = magnet
-        self.dowonload_list.append(dw)
+        self.dowonload_list.append(magnet)
 
     def flush_script(self):
         pass
 
     def download(self):
         self.flush_script()
-        for dw in self.dowonload_list:
-            subprocess.Popen(dw).wait()
+        for magnet in self.dowonload_list:
+            if sys.platform == "win32":
+                os.startfile(magnet)
+            elif sys.platform == "linux":
+                ls = self.script_line[:]
+                ls[self.magnet_location] = magnet
+                subprocess.Popen(ls).wait()
 
     def clean_up(self):
         pass

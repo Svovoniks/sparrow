@@ -45,7 +45,7 @@ SAMPLE_CONFIG_WINDOWS = {
     CONFIG_VER: CURRENT_CONFIG_VER,
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
-    SCRIPT_LINE: [2, '@start', '""',  ""],
+    SCRIPT_LINE: [2, 'start', '/b',  ""],
     TMP_FILE: 'tmp.bat',
 }
 
