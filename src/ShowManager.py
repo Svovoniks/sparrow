@@ -15,7 +15,7 @@ class ShowManager:
         new_episodes = len(to_download)
 
         if new_episodes > 0:
-            print(f'Episodes found for "{show.title}: {new_episodes}"')
+            print(f'Episodes found for "{show.title}": {new_episodes}')
             show.last_episode = last_episode
         else:
             print(f'"{show.title}" is already up to date')
