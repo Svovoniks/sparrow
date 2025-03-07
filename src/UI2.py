@@ -48,8 +48,6 @@ class UpdateCommand(Command):
 
         torrent_engine = TorrentEngine(
             state.config[SCRIPT_LINE],
-            state.config[TMP_FILE],
-            state.config[TMP_FILE_STARTER]
         )
 
         print('Staging updates')
@@ -58,7 +56,6 @@ class UpdateCommand(Command):
 
         print('Starting downloading')
         torrent_engine.download()
-        torrent_engine.clean_up()
         print(colored('\nAll done', "green"))
 
         print("\nAre we good? [y/n]")

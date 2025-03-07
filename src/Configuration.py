@@ -1,8 +1,6 @@
-from copy import deepcopy
 import json
 
 from termcolor import colored
-# from typing import List, Self
 from src.Parsers.SubsPleaseParser import SubsPleaseParser, SUBS_PLEASE_PARSER_NAME
 from src.Parsers.EZTVParser import EZTVParser, EZTV_PARSER_NAME
 from src.Parsers.TokyoToshokanParser import TokyoToshokanParser, TOKYO_TOSHOKAN_PARSER_NAME
@@ -13,7 +11,7 @@ from src.utils import ask_for_num, print_colored_list
 import os
 
 
-CURRENT_CONFIG_VER = 2
+CURRENT_CONFIG_VER = 3
 CONFIG_VER = 'config_v'
 
 SCRIPT_LINE = 'script_line'
@@ -41,24 +39,20 @@ EXTERNAL_SEARCH_PARSERS = [
 ]
 
 CONFIG_FILE = "sys_torrent.cfg"
-REQUIRED_CONFIG_FIELDS = ['download_dir', 'show_list']
+REQUIRED_CONFIG_FIELDS = [DOWNLOAD_DIR, SHOW_LIST]
 
 SAMPLE_CONFIG_WINDOWS = {
     CONFIG_VER: CURRENT_CONFIG_VER,
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
-    SCRIPT_LINE: '@start "" "{}"\n',
-    TMP_FILE: 'tmp.bat',
-    TMP_FILE_STARTER: '',
+    SCRIPT_LINE: [None, 'UNUSED'],
 }
 
 SAMPLE_CONFIG_LINUX = {
     CONFIG_VER: CURRENT_CONFIG_VER,
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
-    SCRIPT_LINE: 'xdg-open "{}"\n',
-    TMP_FILE: 'tmp.sh',
-    TMP_FILE_STARTER: 'bash',
+    SCRIPT_LINE: [1, 'xdg-open', ''],
 }
 
 class ConfigUpdater:
@@ -69,6 +63,7 @@ class ConfigUpdater:
         update_map = {
             0: self.update_from_0_to_1,
             1: self.update_from_1_to_2,
+            2: self.update_from_2_to_3,
         }
 
         while from_v != CURRENT_CONFIG_VER:
@@ -136,6 +131,17 @@ class ConfigUpdater:
             self.get_last_episodes()
 
         return 2
+
+    def update_from_2_to_3(self):
+        backup_file = 'sys_torrent_backup_V2.cfg'
+
+        with open(backup_file, 'w') as file:
+            json.dump(self.full_json, file)
+
+        sample = Configuration.get_sample_config()
+        self.full_json.update({SCRIPT_LINE: sample[SCRIPT_LINE]})
+        self.full_json.update({CONFIG_VER: 3})
+        return 3
 
 class Configuration:
 
