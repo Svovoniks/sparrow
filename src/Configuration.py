@@ -45,8 +45,7 @@ SAMPLE_CONFIG_WINDOWS = {
     CONFIG_VER: CURRENT_CONFIG_VER,
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
-    SCRIPT_LINE: [2, 'start', '/b',  ""],
-    TMP_FILE: 'tmp.bat',
+    SCRIPT_LINE: ['UNUSED'],
 }
 
 SAMPLE_CONFIG_LINUX = {
@@ -54,7 +53,6 @@ SAMPLE_CONFIG_LINUX = {
     DOWNLOAD_DIR: 'dir',
     SHOW_LIST: [],
     SCRIPT_LINE: [1, 'xdg-open', ''],
-    TMP_FILE: 'tmp.sh',
 }
 
 class ConfigUpdater:
