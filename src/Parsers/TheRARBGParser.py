@@ -26,7 +26,7 @@ class TheRARBGParser(NonMagicParserBase):
         if page is None:
             return None
 
-        magnet_pattern = r'''<button onclick="[\s\S]+?copy\('([^']+)','#copy_magnet'\)"'''
+        magnet_pattern = r'''<button onclick="[\s\S]*?copy\('([^']+)','#copy_magnet'\)"'''
         sc = re.search(magnet_pattern, page.text)
         if sc is None:
             return None
