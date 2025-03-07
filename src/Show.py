@@ -1,13 +1,3 @@
-from collections import defaultdict
-from copy import deepcopy
-# from typing import List, Optional, Self
-
-# from Config_constants import PARSER_DICT
-
-# from Configuration import PARSER_DICT
-# from Parsers.ParserFactory import PARSER_MAP, get_parser_by_name
-
-
 REQUIRED_SHOW_FIELDS = ['show_title', 'parser', 'filter', 'link', 'last_episode']
 
 class Show:
@@ -32,6 +22,7 @@ class Show:
         }
 
 
+    @staticmethod
     def check_json(json_obj) -> bool:
         """
         checks if json_obj contains all required information
