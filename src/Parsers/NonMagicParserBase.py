@@ -19,27 +19,16 @@ class NonMagicParserBase(ParserBase):
 
     def process_user_filter(self, _filter):
         real_rgx = r'.*'
+        user_rgx = r'<<[^(>>)]*>>'
 
-        user_rgx = r'<<[^(>>)]+>>'
+        fl = re.escape(_filter)
+        fl = re.sub(user_rgx, real_rgx, fl)
 
-        full_re = r''
-
-        split_list = re.split(user_rgx, _filter)
-
-        if len(split_list) == 0:
-            return full_re
-
-        for i in split_list:
-            if i == '':
-                continue
-
-            full_re += re.escape(i) + real_rgx
-
-        return full_re
+        return fl
 
 
     def apply_filter(self, real_filter, episodes):
-        return list(filter(lambda a: re.fullmatch(real_filter, (a[0])) !=  None, episodes))
+        return list(filter(lambda a: re.fullmatch(real_filter, a[0]) != None, episodes))
 
     def get_filter(self, title, episodes):
         print('This website is an aggregator of shows from multiple sources')
