@@ -75,7 +75,7 @@ class SearchEngine:
         print(f'Look up time {time.time() - tm:.3f} sec')
 
         print(colored(f'Found "{best_match[0]}" on {best_match_parser}', 'green'))
-        confindence = 1 - (min_dist / len(best_match[0]))
+        confindence = max(1 - (min_dist / len(best_match[0])), 0)
         if confindence < 0.7:
             print(colored(f'WARNING: low confidence score: {confindence*100:0.1f}%', 'yellow'))
         else:
