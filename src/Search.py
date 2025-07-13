@@ -77,7 +77,12 @@ class SearchEngine:
         print(colored(f'Found "{best_match[0]}" on {best_match_parser}', 'green'))
         confindence = max(1 - (min_dist / len(best_match[0])), 0)
         if confindence < 0.7:
-            print(colored(f'WARNING: low confidence score: {confindence*100:0.1f}%', 'yellow'))
+            print(colored(f'\nWARNING: low confidence score: {confindence*100:0.1f}%', 'yellow'))
+            print('\nDo you still want to add it? [y/n]')
+            ans = ask_for_input('n (No)')
+            
+            if len(ans) == 0 or ans[0].lower() == 'n':
+                return None
         else:
             print(colored(f'Confidence score: {confindence*100:0.1f}%', 'green'))
         print()
