@@ -48,16 +48,16 @@ class SearchEngine:
 
         for parser, show_set in self.data.items():
             for i in show_set:
-                dis = textdistance.levenshtein(i[0], query)
+                dis = textdistance.levenshtein(i[0].lower(), query.lower())
                 if min_dist is None or dis < min_dist:
                     min_dist = dis
                     best_match = i
                     best_match_parser = parser
 
                     if min_dist == 0:
-                        return (best_match_parser, best_match)
+                        return (best_match_parser, best_match, min_dist)
 
-        return (best_match_parser, best_match)
+        return (best_match_parser, best_match, min_dist)
 
     def magic_search(self, query, look_in=None):
         tm = time.time()
@@ -70,11 +70,16 @@ class SearchEngine:
         if all(map(lambda a: len(a) == 0, self.data.values())):
             return None
 
-        best_match_parser, best_match = self.get_best_match(query)
+        best_match_parser, best_match, min_dist = self.get_best_match(query)
 
         print(f'Look up time {time.time() - tm:.3f} sec')
 
         print(colored(f'Found "{best_match[0]}" on {best_match_parser}', 'green'))
+        confindence = 1 - (min_dist / len(best_match[0]))
+        if confindence < 0.7:
+            print(colored(f'WARNING: low confidence score: {confindence*100:0.1f}%', 'yellow'))
+        else:
+            print(colored(f'Confidence score: {confindence*100:0.1f}%', 'green'))
         print()
 
         parser = PARSER_DICT[best_match_parser]()
