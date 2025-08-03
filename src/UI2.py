@@ -128,17 +128,31 @@ class RemoveCommand(Command):
         show_titles = {show.title: idx for idx, show in enumerate(state.config.show_list)}
         if cookie in show_titles:
             print(f'''\n{colored('Got cookie: "', "green")}{colored(cookie, "white")}{colored('"', "green")}\n''')
-            to_delete = show_titles[cookie]
+            to_delete = [show_titles[cookie]]
         else:
             if cookie:
                 print(f'''\n{colored('Discarded cookie: "', "red")}{colored(cookie, "white")}{colored('"', "red")}\n''')
 
             ShowShowListCommand().execute(state)
-            to_delete = ask_for_num("Choose show to delete\nEnter number that corresponds to the show", len(state.config.show_list))-1
+            to_delete = list(set(filter(lambda a: len(a) > 0, ask_for_input("back to main menu").replace(" ", ",").split(","))))
+            
+            for i in range(len(to_delete)):
+                try:
+                    to_delete[i] = int(to_delete[i])-1
+                except Exception as e:
+                    print(colored(f'Error: failed to parse "{to_delete[i]}" as number', 'red'))
+                    return MainScreenCommand()
+                
+                if to_delete[i] < 0 or to_delete[i] >= len(state.config.show_list):
+                    print(colored(f'Error: "{to_delete[i]+1}" is not a valid show number', 'red'))
+                    return MainScreenCommand()
 
-        print(colored(f'Deleted: "{state.config.show_list[to_delete].title}"', 'red'))
-
-        state.config.remove_show(state.config.show_list[to_delete])
+        # This is horrible, but whatever it's python
+        to_delete = list(map(lambda a: state.config.show_list[a], to_delete))
+        for i in to_delete:
+            print(colored(f'Deleted: "{i.title}"', 'red'))
+            state.config.remove_show(i)
+            
         state.config.update_config()
 
         return MainScreenCommand()

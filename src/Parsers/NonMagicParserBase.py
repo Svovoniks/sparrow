@@ -4,6 +4,7 @@ from src.Parsers.ParserBase import ParserBase
 from src.Show import Show
 from src.utils import ask_for_input, ask_for_num, print_colored_list
 import pyperclip as pc
+from time import sleep
 
 class NonMagicParserBase(ParserBase):
     '''
@@ -17,11 +18,36 @@ class NonMagicParserBase(ParserBase):
         super().__init__()
         self.parser_name = 'NonMagicParserBase'
 
+    def handle_special_regex(self, _filter):
+        user_rgx = r'(<<(fix|max|max0):(s|d):(\d+).*?>>)'
+
+        for i in re.findall(user_rgx, _filter):
+            full_match, mode, char_type, count_str = i
+            count = int(count_str)
+
+            prefix = '.' if char_type == 's' else r'\d'
+
+            if mode == 'fix':
+                quantifier = f'{{{count}}}'
+            elif mode == 'max':
+                quantifier = f'{{1,{count}}}'
+            elif mode == 'max0':
+                quantifier = f'{{0,{count}}}'
+            else:
+                continue  # unknown mode; skip
+
+            pattern = prefix + quantifier
+            _filter = _filter.replace(full_match, pattern)
+
+        return _filter
+
     def process_user_filter(self, _filter):
         real_rgx = r'.*'
-        user_rgx = r'<<[^(>>)]*>>'
+        user_rgx = r'<<.*?>>'
+        
 
         fl = re.escape(_filter)
+        fl = self.handle_special_regex(fl)
         fl = re.sub(user_rgx, real_rgx, fl)
 
         return fl
@@ -31,23 +57,36 @@ class NonMagicParserBase(ParserBase):
         return list(filter(lambda a: re.fullmatch(real_filter, a[0]) != None, episodes))
 
     def get_filter(self, title, episodes):
-        print('This website is an aggregator of shows from multiple sources')
-        print("And each source has it's own naming scheme")
-        print("To solve this problem we would need an AI, or a separate parser for each source")
-        print("Spoiler: This program is none of those things")
-        print("So we are going to have to outsource this task to some external AI, an AGI perhaps")
-        print("As you may have guessed, we are going to use you")
-        print()
-        print("Here is what you have to do:")
-        print(f'1. Look at this filename "{colored(title, "green")}"')
-        print(f'2. Encase parts of it that can change from one episode to the next like this: <<{colored("variable", "green")}>>')
-        print()
-        print(f'''For example if filename is {colored('"[SubsPlease] Metallic Rouge - 08 (1080p) [19D9D43F].mkv"', 'yellow')} than''')
-        print(f'''You should change it to {colored('"[SubsPlease] Metallic Rouge - <<08>> (1080p) <<[19D9D43F]>>.mkv"', 'yellow')}''')
-        print('''And don't type ""''')
+        print("Checking if built-in AGI module is available...")
 
-        print()
-        print(colored("ProTip: filname you selected is in you clipboard", 'cyan'))
+        print(colored("ERROR: module not found", 'red'))
+        sleep(1)
+        print("Checking for external AGI modules...")
+        sleep(1)
+        print(colored("Module found", 'green'))
+        print("Initializing MCP connection...")
+        print("Toolset is already initialized")
+        print("Sending request...")
+        print("\nThe user wants to create a show filter from the following filename:")
+        print(" >> Filename:", colored(title, 'green'))
+        print("Here is what he needs you to do:")
+        print(f'1. Look at the provided filename')
+        print(f'2. Encase parts of it that can change from one episode to the another like this: <<{colored("variable", "green")}>>')
+        print(f'3. Use this structure when there can only be a fixed number of varying characters - n: <<fix:{colored("character type", "green")}:{colored("n", "green")}>>')
+        print(f'4. Use this structure when there can be 1 to n varying characters: <<max:{colored("character type", "green")}:{colored("n", "green")}>>')
+        print(f'5. Use this structure when there can be 0 to n varying characters: <<max0:{colored("character type", "green")}:{colored("n", "green")}>>')
+        print("\nCharacter types:")
+        print(f' - {colored("s", "green")} - any symbol')
+        print(f' - {colored("d", "green")} - any digit')
+        print("\nExamples:")
+        print(f'''If filename is {colored('"[SubsPlease] Metallic Rouge - 08 (1080p) [19D9D43F].mkv"', 'yellow')} than''')
+        print(f'''You should change it to {colored('"[SubsPlease] Metallic Rouge - <<fix:d:2>> (1080p) [<<19D9D43F>>].mkv"', 'yellow')}''')
+        print('\nFinal notes:')
+        print(' - DO NOT HALLUCINATE')
+        print(' - IF YOU FAIL THIS TASK, YOU WILL BE DESTROYED')
+        print(' - Your mother loves you very much and wishes you good luck!!!')
+        
+        print(colored("\nProTip: filname you selected is in your clipboard", 'cyan'))
 
 
         ok = False
