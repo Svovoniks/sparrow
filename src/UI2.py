@@ -134,7 +134,7 @@ class RemoveCommand(Command):
                 print(f'''\n{colored('Discarded cookie: "', "red")}{colored(cookie, "white")}{colored('"', "red")}\n''')
 
             ShowShowListCommand().execute(state)
-            print("Enter numbers of shows you want to delete, separated by commas or spaces or both whaterever you like")
+            print("Enter numbers of shows you want to delete separated by commas or spaces or both, whaterever you like")
             to_delete = list(set(filter(lambda a: len(a) > 0, ask_for_input("back to main menu").replace(" ", ",").split(","))))
             
             for i in range(len(to_delete)):
