@@ -110,7 +110,7 @@ class EZTVParser(ParserBase):
             exit(1)
 
         print(f'Here is a list of all episode for {title}')
-        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
+        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]), reverse=True)
 
         ep_num = ask_for_num('\nPlease eneter the number of the episode from which you want me to create episode filter\n', len(episodes))
 

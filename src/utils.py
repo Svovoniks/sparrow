@@ -79,25 +79,25 @@ def map_to_columns(_list):
 
     return res_arr
 
-def print_colored_list(_list, color = 'cyan', line_color = 'yellow', mapper = lambda a: a, first_heading=False, col_sep='   '):
+def print_colored_list(_list, color = 'cyan', line_color = 'yellow', mapper = lambda a: a, first_heading=False, col_sep='   ', reverse=False):
     print(colored("_______________________", line_color))
-
-    column_list = []
-    if first_heading:
-        column_list.append(_list[0])
-
-    column_list.extend(list(map(mapper, _list[int(first_heading):])))
-    column_list = map_to_columns(column_list)
-
+    
+    heading = _list[0] if first_heading else None
+    
     idx_space = 1 + int(math.log(max(len(_list), 1), 10))
-
+    
     if first_heading:
-        print(colored(' '*idx_space + '  ' + col_sep.join(column_list[0]), 'yellow'))
-
-    idx_space = 1 + int(math.log(max(len(_list), 1), 10))
-
-    for idx, el in enumerate(column_list[int(first_heading):]):
-        print(colored(('{0:' + str(idx_space) + 'd}. ').format(idx+1) +  col_sep.join(el), color))
+        print(colored(' '*idx_space + '  ' + col_sep.join(heading), 'yellow'))
+    
+    list_items = map_to_columns(list(map(mapper, _list[int(first_heading):])))
+    
+    rng = range(len(list_items))
+    
+    if reverse:
+        rng = range(len(list_items)-1, -1, -1)
+    
+    for i in rng:
+        print(colored(('{0:' + str(idx_space) + 'd}. ').format(i+1) +  col_sep.join(list_items[i]), color))
 
     print(colored("_______________________", line_color))
 

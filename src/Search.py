@@ -111,7 +111,7 @@ class SearchEngine:
         episodes = parser.apply_filter(parser.process_user_filter(show.filter), episodes)
         episodes.append(('None of these',))
 
-        print_colored_list(episodes, mapper=lambda a: a[0])
+        print_colored_list(episodes, mapper=lambda a: a[0], reverse=True)
 
         num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
 

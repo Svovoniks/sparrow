@@ -135,7 +135,7 @@ class NonMagicParserBase(ParserBase):
 
         print(f'Here is a list of all episodes for {title}')
 
-        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]))
+        print_colored_list(episodes, mapper=lambda a: (a[0], a[2]), reverse=True)
 
         ep_num = ask_for_num('\nPlease enter the number of the episode from which you want to create episode filter\n', len(episodes))
 
@@ -154,7 +154,7 @@ class NonMagicParserBase(ParserBase):
             filtered_episodes = self.apply_filter(self.process_user_filter(ep_filter), episodes)
             filtered_episodes.append(('None of these', ))
 
-            print_colored_list(filtered_episodes, mapper=lambda a: a[0])
+            print_colored_list(filtered_episodes, mapper=lambda a: a[0], reverse=True)
 
             num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
             last_episode = filtered_episodes[num-1][0]
