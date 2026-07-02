@@ -1,9 +1,6 @@
-import asyncio
-
 from termcolor import colored
 from src.Parsers.ParserBase import ParserBase
 import re
-from functools import reduce
 from src.Show import Show
 
 from src.utils import ask_for_num, print_colored_list, ask_for_input
@@ -85,13 +82,18 @@ class EZTVParser(ParserBase):
         all_episodes = []
 
         for i in re.findall(pattern_row, page.text):
-            if stop_after == i[1] and stop_after is not None:
+            magnets = re.findall(pattern_magnet, i)
+            epinfos = re.findall(pattern_epinfo, i)
+
+            if len(magnets) == 0 or len(epinfos) == 0:
+                continue
+
+            epinfo = epinfos[0]
+
+            if stop_after is not None and stop_after == epinfo[1]:
                 break
 
-            magnet = re.findall(pattern_magnet, i)[0]
-            epinfo = re.findall(pattern_epinfo, i)[0]
-
-            all_episodes.append((epinfo[1], epinfo[0], epinfo[2], magnet))
+            all_episodes.append((epinfo[1], epinfo[0], epinfo[2], magnets[0]))
 
         return all_episodes
 

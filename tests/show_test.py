@@ -7,6 +7,7 @@ json_show_obj = {
             "parser": 'parser',
             "filter": 'show filter',
             "link": 'https://show.com',
+            "last_episode": None,
         }
 
 json_show_obj_invalid = {
@@ -16,17 +17,16 @@ json_show_obj_invalid = {
         }
 
 
-show_obj = Show('title', 'parser', 'show filter', 'https://show.com')
+show_obj = Show('title', 'parser', 'show filter', 'https://show.com', None)
 
 class ShowTestCase(unittest.TestCase):
-    
+
     def test_to_json(self):
         self.assertEqual(show_obj.to_json(), json_show_obj)
-    
+
     def test_from_json(self):
         self.assertEqual(Show.from_json(json_show_obj), show_obj)
         self.assertEqual(Show.from_json(json_show_obj_invalid), None)
 
 if __name__ == '__main__':
     unittest.main()
-    

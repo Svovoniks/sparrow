@@ -1,5 +1,6 @@
 from threading import Thread
 from copy import deepcopy
+from termcolor import colored
 from src.Configuration import DOWNLOAD_DIR, Configuration, PARSER_DICT
 import time
 
@@ -10,7 +11,13 @@ class ShowManager:
     def check_one(self, show, res):
         print(f'checking "{show.title}"')
         to_download = []
-        last_episode = PARSER_DICT[show.parser_name]().check_show(show, to_download)
+
+        try:
+            last_episode = PARSER_DICT[show.parser_name]().check_show(show, to_download)
+        except Exception as e:
+            print(colored(f'Failed to check "{show.title}": {e}', 'red'))
+            res[0] = []
+            return
 
         new_episodes = len(to_download)
 
@@ -56,14 +63,10 @@ class ShowManager:
 
         for i in range(len(new_config.show_list)):
             threads[i].join()
-            to_download.extend(updates[i][0])
+            if updates[i][0] is not None:
+                to_download.extend(updates[i][0])
             new_config.update_show(new_config.show_list[i])
 
         print(f"Total found: {len(to_download)}")
 
         return to_download, new_config
-
-    @staticmethod
-    def find_show(title: str):
-        for i in PARSER_DICT.values():
-            i.get_all_show_titles()

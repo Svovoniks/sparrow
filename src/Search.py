@@ -75,16 +75,16 @@ class SearchEngine:
         print(f'Look up time {time.time() - tm:.3f} sec')
 
         print(colored(f'Found "{best_match[0]}" on {best_match_parser}', 'green'))
-        confindence = max(1 - (min_dist / len(best_match[0])), 0)
-        if confindence < 0.7:
-            print(colored(f'\nWARNING: low confidence score: {confindence*100:0.1f}%', 'yellow'))
+        confidence = max(1 - (min_dist / max(len(best_match[0]), 1)), 0)
+        if confidence < 0.7:
+            print(colored(f'\nWARNING: low confidence score: {confidence*100:0.1f}%', 'yellow'))
             print('\nDo you still want to add it? [y/n]')
             ans = ask_for_input('n (No)')
-            
+
             if len(ans) == 0 or ans[0].lower() == 'n':
                 return None
         else:
-            print(colored(f'Confidence score: {confindence*100:0.1f}%', 'green'))
+            print(colored(f'Confidence score: {confidence*100:0.1f}%', 'green'))
         print()
 
         parser = PARSER_DICT[best_match_parser]()
@@ -114,6 +114,9 @@ class SearchEngine:
         print_colored_list(episodes, mapper=lambda a: a[0], reverse=True)
 
         num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
+
+        if num == len(episodes): # the appended 'None of these' entry
+            return None
 
         return episodes[num-1][0]
 

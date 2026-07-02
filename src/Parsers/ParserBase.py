@@ -22,7 +22,7 @@ class ParserBase:
         '''
         raise NotImplementedError
 
-    def get_all_show_episodes(self, show, limitб, stop_after=None):
+    def get_all_show_episodes(self, show, limit, stop_after=None):
         '''
         return a list of all episodes that satisfy user query as a list[(episode_title, ... ), ...]
         the length of the list shouldn't exceed limit unless it's set to None
@@ -41,8 +41,14 @@ class ParserBase:
             if show.last_episode is not None and show.last_episode == episode[0]:
                 return new_last
 
+            magnet = self.get_magnet(episode)
+
+            if magnet is None:
+                print(colored(f'''Couldn't get magnet link for "{episode[0].strip()}", skipping it''', 'red'))
+                continue
+
             print(f'Missing "{episode[0].strip()}"')
-            to_download.append(self.get_magnet(episode))
+            to_download.append(magnet)
 
         return new_last
 
@@ -75,7 +81,7 @@ class ParserBase:
             session.headers.update({
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
             })
-            resp = session.get(url, )
+            resp = session.get(url, timeout=30)
 
             if resp.status_code != 200:
                 print(colored(f"Couldn't load '{url}", 'red'))

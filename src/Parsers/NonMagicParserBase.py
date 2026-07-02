@@ -156,8 +156,10 @@ class NonMagicParserBase(ParserBase):
 
             print_colored_list(filtered_episodes, mapper=lambda a: a[0], reverse=True)
 
-            num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
-            last_episode = filtered_episodes[num-1][0]
+            num = ask_for_num('What episode is the last one you have downloaded?',  len(filtered_episodes))
+
+            if num != len(filtered_episodes):
+                last_episode = filtered_episodes[num-1][0]
 
         return ep_filter, last_episode
 

@@ -8,7 +8,9 @@ from src.Parsers.TheRARBGParser import TheRARBGParser, THE_RARBG_PARSER_NAME
 from src.Show import Show
 from os.path import exists
 from src.utils import ask_for_num, print_colored_list
+from copy import deepcopy
 import os
+import sys
 
 
 CURRENT_CONFIG_VER = 3
@@ -55,6 +57,13 @@ SAMPLE_CONFIG_LINUX = {
     SCRIPT_LINE: [1, 'xdg-open', ''],
 }
 
+SAMPLE_CONFIG_MAC = {
+    CONFIG_VER: CURRENT_CONFIG_VER,
+    DOWNLOAD_DIR: 'dir',
+    SHOW_LIST: [],
+    SCRIPT_LINE: [1, 'open', ''],
+}
+
 class ConfigUpdater:
     def __init__(self, full_json) -> None:
         self.full_json = full_json
@@ -67,6 +76,11 @@ class ConfigUpdater:
         }
 
         while from_v != CURRENT_CONFIG_VER:
+            if from_v not in update_map:
+                print(colored(f"Error: config version {from_v} is not supported (this app supports up to {CURRENT_CONFIG_VER})", 'red'))
+                print(colored("Your config might have been created by a newer version of the app", 'red'))
+                exit(1)
+
             from_v = update_map[from_v]()
 
         print(colored(f"Updated config version to {from_v}", 'green'))
@@ -99,7 +113,11 @@ class ConfigUpdater:
 
             num = ask_for_num('What episode is the last one you have downloaded?',  len(episodes))
 
-            i.update({'last_episode': episodes[num-1][0]})
+            last_episode = None
+            if num != len(episodes):
+                last_episode = episodes[num-1][0]
+
+            i.update({'last_episode': last_episode})
 
     def update_from_1_to_2(self):
         backup_file = 'sys_torrent_backup_V2.cfg'
@@ -133,7 +151,7 @@ class ConfigUpdater:
         return 2
 
     def update_from_2_to_3(self):
-        backup_file = 'sys_torrent_backup_V2.cfg'
+        backup_file = 'sys_torrent_backup_V3.cfg'
 
         with open(backup_file, 'w') as file:
             json.dump(self.full_json, file)
@@ -151,7 +169,8 @@ class Configuration:
             full_json = ConfigUpdater(full_json).update(config_ver)
 
         self.config_json = full_json
-        self.show_list = [Show.from_json(i) for i in self.config_json[SHOW_LIST] if i != None]
+        parsed_shows = (Show.from_json(i) for i in self.config_json[SHOW_LIST] if i is not None)
+        self.show_list = [show for show in parsed_shows if show is not None]
 
     def __getitem__(self, arg):
         return self.config_json[arg]
@@ -175,7 +194,11 @@ class Configuration:
         self.show_list.append(show)
 
     def remove_show(self, show: Show):
-        self.config_json[SHOW_LIST].remove(show.to_json())
+        for idx in range(len(self.config_json[SHOW_LIST])):
+            if Show.from_json(self.config_json[SHOW_LIST][idx]) == show:
+                del self.config_json[SHOW_LIST][idx]
+                break
+
         self.show_list.remove(show)
 
     def update_show(self, show: Show):
@@ -198,9 +221,11 @@ class Configuration:
     @staticmethod
     def get_sample_config():
         if os.name == 'posix':
-             return SAMPLE_CONFIG_LINUX
+            if sys.platform == 'darwin':
+                return deepcopy(SAMPLE_CONFIG_MAC)
+            return deepcopy(SAMPLE_CONFIG_LINUX)
         if os.name == 'nt':
-            return SAMPLE_CONFIG_WINDOWS
+            return deepcopy(SAMPLE_CONFIG_WINDOWS)
 
         print("you appear to be using some weird OS i don't have a config for it so you are gonna have to make it yourself")
         exit(1)
