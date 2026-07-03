@@ -1,6 +1,7 @@
 # Usage:   
 - install requirements (`py -m pip install -r requirements.txt`)
 - run program (`py main.py`)
+- or run it with a graphical interface (`py main.py gui`)
 
 # Simplified usage:   
 - download `setup.bat` (you can do it from releases), put it where you want to install sparrow (it will be installed in a folder called `sparrow` next to the `setup.bat`) and double-click it
@@ -10,6 +11,7 @@
 ## What do the .bats do?
 - `setup.bat` downloads project (action also known as `git clone`) and calls `install_reqirements.bat` and `create_launcher.bat`
 - `install_reqirements.bat` creates virtual environment (to avoid cluttering your system with random libraries) in the folder it was launched from and installs all dependencies there
-- `create_launcher.bat` creates `start.bat` and `update.bat`
+- `create_launcher.bat` creates `start.bat`, `start_gui.bat` and `update.bat`
 - `start.bat` activates virtual environment and launches main.py in it
+- `start_gui.bat` does the same but with the graphical interface
 - `update.bat` updates project (it's just `git pull` inside)
