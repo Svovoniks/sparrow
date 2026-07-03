@@ -8,17 +8,17 @@ class TorrentEngine:
     def __init__(self, script_line) -> None:
         self.script_line = script_line[1:]
         self.magnet_location = script_line[0]
-        self.dowonload_list = []
+        self.download_list = []
 
 
     def add_download(self, magnet: str):
-        self.dowonload_list.append(magnet)
+        self.download_list.append(magnet)
 
     def download(self):
-        for magnet in self.dowonload_list:
+        for magnet in self.download_list:
             if sys.platform == "win32":
                 os.startfile(magnet)
-            elif sys.platform == "linux":
+            else:
                 ls = self.script_line[:]
                 ls[self.magnet_location] = magnet
                 subprocess.Popen(ls).wait()
